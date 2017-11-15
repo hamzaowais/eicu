@@ -1,0 +1,24 @@
+.statusText {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+body .statusText {
+	line-height: 1;
+}
+
+.btn-info {
+	background-color: #14a0a8;
+}
+
+.btn-info:hover {
+	background-color: ;
+}
+
+.statusTextContainer {
+	height: 90%;
+}
+
+.routerContainer {
+	height: 100%;
+}

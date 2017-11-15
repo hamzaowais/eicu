@@ -1,0 +1,15 @@
+.buttonContainer {
+	width: 100%;
+	margin-top: 40%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.buttonText {
+	text-align: center;
+	font-family: 'Droid Serif', serif;
+}
+
+.btn-danger {
+	background-color: #ff4a32;
+}

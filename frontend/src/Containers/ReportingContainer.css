@@ -1,0 +1,19 @@
+table {
+	table-layout: fixed;
+}
+
+td, th {
+	padding: 5px;
+}
+
+.highlighter: {
+	background-color: #F10;
+}
+
+.loading {
+	display: block;
+	margin: 10px auto;
+	vertical-align: middle;
+	height: 500px;
+	width: 500px;
+}

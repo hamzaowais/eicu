@@ -1,0 +1,15 @@
+.bodyContainer {
+	display: block;
+	margin-left: 15%;
+}
+
+.body {
+	display: block;
+	margin-top: 10px;
+	width: 70%;
+	position: absolute;
+}
+
+.bodystatus {
+	z-index: 3;
+}

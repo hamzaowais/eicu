@@ -1,0 +1,12 @@
+.patientDataContainer {
+	width: 80%;
+	height: 100%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	padding: 5%;
+	background-color: #4E5C70;
+	color: #FFF;
+	border-radius: 5px;
+}

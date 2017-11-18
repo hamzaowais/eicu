@@ -11,6 +11,7 @@ module.exports = function(app){
     app.use(cors());
     app.get('/getMimicData', DataRoute.getMimicData);
     app.get('/getInitialData', DataRoute.getInitialData);
+    app.post('/generateReport', DataRoute.generateReport);
 
     app.get('/safiatest', function(req, res){
     	var data={

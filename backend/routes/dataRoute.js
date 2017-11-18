@@ -30,55 +30,65 @@ module.exports = {
 			response.json(request.output);
 		}
 
-	}
+	},
 
-	// getVitalsAll: function(request,response){
-	// 	try{
-	// 		if(request&&request.query){
-	// 			['subject_id','hadm_id','icustay_id','category'].forEach(function(str){
-	// 				if (!request.query[str]){
-	// 					var err = new Error(str+' is not present in the URL');
-	// 					throw err;
-	// 				}
-	// 				});
+	generateReport: function(request,response){
+		try{
 
-	// 				request.input={};
-	// 				['subject_id','hadm_id','icustay_id','category'].forEach(function(str){
-	// 					request.input[str]=request.query[str];
-	// 				});
+			if(request&&request.body){
+				
+				['icd9codes','inputfeatures','targetfeatures'].forEach(function(str){
+					if (!request.body[str]){
+						var err = new Error(str+' is not present in the URL');
+						throw err;
+					}
+					});
 
-	// 				console.log(request.input);
-	// 				PatientControllers.getVitalsAll(request.input,function(err, data) {
- // 						 if(err){
- // 						 	throw err;
- // 						 }
+					request.input={};
+					['icd9codes','inputfeatures','targetfeatures'].forEach(function(str){
+						request.input[str]=request.body[str];
+					});
+
+
+					EicuController.generateReport(request.input, function(err, data) {
+ 					if(err){
+ 						throw err;
+ 					}
+ 					return response.json(data);
+ 					});
+
+					
+					// PatientControllers.getVitalsAll(request.input,function(err, data) {
+ 				// 		 if(err){
+ 				// 		 	throw err;
+ 				// 		 }
  						
  						
- // 						return response.json(data);
+ 				// 		return response.json(data);
 
 
-	// 				});
+					// });
 
 					
 						
 				
 
-	// 		}
-	// 		else{
-	// 			console.log(request.query);
-	// 			var err = new Error(' Query is not present in the URL');
-	// 			throw err;
-	// 		}
+			}
+			else{
+				console.log(request.query);
+				var err = new Error(' Query is not present in the URL');
+				throw err;
+			}
 			
-	// 	}
-	// 	catch(e){
-	// 		request.output={}
-	// 		request.output.error=true;
-	// 		request.output.message=e.message;
-	// 		response.json(request.output);
-	// 	}
+		}
+		catch(e){
+			request.output={}
+			request.output.error=true;
+			request.output.message=e.message;
+			response.json(request.output);
+		}
 
-	// },
+	}
 	// getReport:function(request,response){  
 	// 	try{
 	// 		if(request&&request.query){

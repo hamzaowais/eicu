@@ -29,6 +29,101 @@ module.exports = {
 		}
 
 	},
+	getDiagnosisData: function(patientId, icd9codes,  callback){
+		try{
+
+			
+			var queryParams=[patientId];
+
+			var params=[];
+			for(var i = 1; i <= icd9codes.length; i++) {
+  				params.push('$' + (i+1));
+  				queryParams.push(icd9codes[i]);
+			}
+
+
+			
+
+			var query="select diagnosisOffset, diagnosisString, ICD9Code from eicu.diagnosis where patientunitstayid= $1 and ICD9Code in ("+params.join(",")+") order by diagnosisOffset;";
+			
+
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+
+			
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
+	getLabData: function(patientId,labItems,  callback){
+		try{
+
+			
+			var queryParams=[patientId];
+
+			var params=[];
+			for(var i = 1; i <= labItems.length; i++) {
+  				params.push('$' + (i+1));
+  				queryParams.push(labItems[i]);
+			}
+
+
+
+			var query="select labResultOffset, labName, labResult from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") order by labResultOffset;";
+			
+
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+
+			
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
 	getVitalsignData: function(patientId, callback){
 		try{
 

@@ -26,6 +26,8 @@ class ReportingContainer extends Component {
 
 		
 		this.state = {
+			generatingreport:0,
+			url:'',
 			loading:0,
 			alert:alert,
 			step:0,
@@ -609,7 +611,7 @@ class ReportingContainer extends Component {
 	}
 
 	generateDataSet(){
-		alert("Backend Is not ready Yet. Please look at the console for input Params");
+		this.setState({generatingreport:1});
 		var params={};
 		var icd9codes= this.state.icd9codes;
 		var inputfeatures=this.state.inputfeatures;
@@ -626,6 +628,25 @@ class ReportingContainer extends Component {
 			inputfeatures:inputfeatures,
 			targetfeatures:targetfeatures
 		}
+
+		var self = this;
+		
+		axios.post(backendlink.backendlink+'/generatereport', params1)
+  			.then(function (response) {
+  				console.log(response);
+  				self.setState({
+  					generatingreport:2,
+  					url:response.data.data_url
+  				});
+
+  				window.open('file://'+response.data.data_url);
+    			
+  			})
+  			.catch(function (error) {
+    			console.log(error);
+  			});
+
+
 
 		console.log('Json format of the param of the post request');
 		console.log(params);
@@ -715,6 +736,19 @@ class ReportingContainer extends Component {
 
 	}
 	render() {
+
+		if(this.state.generatingreport==1){
+			return(
+				<center><h1>Generating Report</h1></center>
+				)
+		}
+
+		if(this.state.generatingreport==2){
+			return(
+				<center><h1>Data Set Generated: click < a href={'file:///'+this.state.url}>Url</a>   {'file:///'+this.state.url} </h1></center>
+
+				)
+		}
 		var a= [];
 		if(this.state.alert.flag==0){
 		if(this.state.loading==1){

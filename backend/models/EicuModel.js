@@ -169,6 +169,8 @@ module.exports = {
 			for(var i = 1; i <= icd9codes.length; i++) {
   				params.push('$' + i);
 			}
+
+			console.log(icd9codes);
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+");";
 			console.log(query);
 

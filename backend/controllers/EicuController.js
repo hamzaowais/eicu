@@ -33,29 +33,140 @@ module.exports = {
 		}
 
 	},
+	trimNullData: function(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, callback){
+
+		var trimmedOutput=[];
+
+		dataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+			var flagremove=0;
+
+			var flaginput=1;
+			//check if all the values
+			inputHeaders.forEach(function(header){
+				if(eachRow[header]!=-1){
+					flaginput=0;
+				}
+			});
+
+			targetHeaders.forEach(function(header){
+				if(eachRow[header]==-1){
+					flagremove=1;
+				}
+			});
+
+			if(flagremove==0&&flaginput==0){
+				trimmedOutput.push(eachRow);
+			}
+
+		});
+
+
+		return callback(null, trimmedOutput);
+
+	},
 	
+	getPatients: function(icd9codes, callback){
+
+		return EicuModel.getPatientsIdsWithIcd9(icd9codes,function(err, resultsPatientIdsObjwithDiagnosis){
+			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
+
+			
+				minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
+
+				if(minLengthPatientIds>=2000){
+					minLengthPatientIds=2000;
+				}
+
+
+
+
+				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
+				var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
+
+				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
+				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
+
+
+
+
+				var patientIds=[];
+				var patientIdDic={};
+
+
+				var minSoFar=Math.min(trainWithDiagnosis.length,validationWithDiagnosis.length, trainWithoutDiagnosis.length,validationWithoutDiagnosis.length);
+
+				for(var i=0;i<minSoFar;i++){
+					patientIds.push(trainWithDiagnosis[i].patientunitstayid);
+					patientIdDic[trainWithDiagnosis[i].patientunitstayid]={
+						file:'train',
+						diagnosis:false
+					}
+					patientIds.push(trainWithoutDiagnosis[i].patientunitstayid);
+					patientIdDic[trainWithoutDiagnosis[i].patientunitstayid]={
+						file:'train',
+						diagnosis:false
+					}
+
+
+					patientIds.push(validationWithDiagnosis[i].patientunitstayid);
+					patientIdDic[validationWithDiagnosis[i].patientunitstayid]={
+						file:'validation',
+						diagnosis:false
+					}
+					patientIds.push(validationWithoutDiagnosis[i].patientunitstayid);
+					patientIdDic[validationWithoutDiagnosis[i].patientunitstayid]={
+						file:'validation',
+						diagnosis:false
+					}
+
+				}
+
+
+
+
+
+				return callback(null, patientIds, patientIdDic);
+				
+			
+			// 	var resultsPatientIds=resultsPatientIdsObj.map(function(element){
+			// 		return element.patientunitstayid;
+			// 	});
+			// return callback(null, resultsPatientIdsObjwithDiagnosis);
+
+
+		});
+
+		});
+
+	},
 	getDataHeaders: function(inputFeatures, outputFeatures,callback){
 		var headers=["patientunitstayid","time", "diagnosis", "diagnosisstring" , "icd9code"];
+
+		var inputHeaders=[];
+		var targetHeaders=[];
 
 		
 		Object.keys(inputFeatures).forEach(function(label){
 			headers.push(label);
+			inputHeaders.push(label);
 		});
 
 		Object.keys(inputFeatures).forEach(function(label){
 			for(i=1;i<=inputFeatures[label].history;i++){
 				headers.push(label+'_hist_'+i);
+				inputHeaders.push(label);
 			}
 		});
 
 		Object.keys(outputFeatures).forEach(function(label){
 			for(i=1;i<=outputFeatures[label].future;i++){
 				headers.push(label+'_fut_'+i);
+				targetHeaders.push(label);
 			}
 		});
 
 
-		return callback(null, headers);
+		return callback(null, headers, inputHeaders, targetHeaders);
 
 	}, 
 	getDataWithHistoryPrediction: function(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures,callback){
@@ -306,7 +417,10 @@ module.exports = {
 
 			var vitalReadings=[];
 
-			var fileName="trainingValidationData_"+Math.floor(Date.now() / 1000)+".csv"
+			var trainingDatafileName="trainingData_"+Math.floor(Date.now() / 1000)+".csv";
+			var validationDatafileName="validationData_"+Math.floor(Date.now() / 1000)+".csv";
+
+
 
 			Object.keys(inputFeatures).forEach(function(label){
 				if(inputFeatures[label].dbsource==="lab"){
@@ -332,23 +446,16 @@ module.exports = {
 
 
 			//Get all the patients with the icd9codes.
-			return EicuModel.getPatientsIdsWithIcd9(icd9Codes,function(err, resultsPatientIdsObj){
-				var numberPatientIds=resultsPatientIdsObj.length;
+			return module.exports.getPatients(icd9Codes,function(err, patientIds, patientIdDic){
 				
-				if(numberPatientIds>2000){
-					resultsPatientIdsObj=resultsPatientIdsObj.slice(0, 50);
-					
-				}
-
-				var resultsPatientIds=resultsPatientIdsObj.map(function(element){
-					return element.patientunitstayid;
-				});
 				
 
-				var wflag=0;
+				var wflagt=0;
+
+				var wflagv=0;
 
 
-				async.eachSeries(resultsPatientIds, function(patientId, callback) {
+				async.eachSeries(patientIds, function(patientId, callback) {
 
     			// Perform operation on file here.
     				console.log('Processing PatientID ' + patientId);
@@ -370,9 +477,6 @@ module.exports = {
     						}
 
     						// get data from the diagnosis Table;
-
-    						
-
     						return module.exports.getMergeDiagnosisTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
 
     							if(err){
@@ -388,36 +492,61 @@ module.exports = {
 
     								//Get proper Headers as per the input
 
-    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err,headers){
+    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
     									if(err){
     										return callback(err);
     									}
 
+    									//Remove Rows with any null outputs and all null input
+    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
 
-			    						if(wflag==0){
-			    							wflag=1;
-			    						var csv = json2csv({ data: dataVitalSignLabDiagnosisPredictHist, fields: headers});
-			 							
-										return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-			  								if (err) return callback(err);
-			  							console.log('file saved');
-			    						return callback();
-										});
-			    							
-			    						}
+											var fileName='';
+											if(patientIdDic[patientId].file=='train'){
+												fileName=trainingDatafileName;
+											}else{
+												fileName=validationDatafileName;
 
+											}
 
-			    						var csv = json2csv({ data: dataVitalSignLabDiagnosisPredictHist, fields: headers, hasCSVColumnTitle:false});
-			 							csv="\n"+csv;
-										return fs.appendFile('./dataset/'+fileName, csv, function(err) {
-			  								if (err) return callback(err);
-			  							console.log('file saved');
-			    						return callback();
-    									
-    								});
+				    						if(wflagt==0 && fileName==trainingDatafileName){
+				    							wflagt=1;
+				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers});
+				 							
+											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+				  								if (err) return callback(err);
+				  							console.log('file saved');
+				    						return callback();
+											});
+				    							
+				    						}
+
+				    						if(wflagv==0 && fileName==validationDatafileName){
+				    							wflagv=1;
+				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers});
+				 							
+											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+				  								if (err) return callback(err);
+				  							console.log('file saved');
+				    						return callback();
+											});
+				    							
+				    						}
+
+				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers, hasCSVColumnTitle:false});
+				 							csv="\n"+csv;
+											return fs.appendFile('./dataset/'+fileName, csv, function(err) {
+				  								if (err) return callback(err);
+				  							console.log('file saved');
+				    						return callback();
+	    									
+	    									});
+    										
+    									});
+
 
 
     							});
+    									
 
 								});
     						});
@@ -436,7 +565,8 @@ module.exports = {
       					console.log('All files have been processed successfully');
     				}
     				var output={};
-    				output.data_url= process.env.PWD + '/dataset/'+fileName;
+    				output.data_train_url= process.env.PWD + '/dataset/'+trainingDatafileName;
+    				output.data_validation_url= process.env.PWD + '/dataset/'+validationDatafileName;
 
     				return callback(null,output);
 				});				

@@ -168,6 +168,51 @@ module.exports = {
 		}
 
 	},
+
+	getPatientsIdsWithoutIcd9: function(icd9codes, callback){
+		try{
+
+
+			var params = [];
+
+			if(icd9codes.length==0){
+				return callback(null, []);
+			}
+			
+			for(var i = 1; i <= icd9codes.length; i++) {
+  				params.push('$' + i);
+			}
+
+			
+			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code not in ("+ params.join(',')+");";
+			console.log(query);
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,icd9codes,(err, res) => {
+  				
+  				if(!err) {
+    				
+					return callback(null,res.rows);
+				} else {
+					console.log(err);
+    			 return callback(err);    
+				}
+
+  			client.end();
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
+
 	getPatientsIdsWithIcd9: function(icd9codes, callback){
 		try{
 
@@ -184,7 +229,7 @@ module.exports = {
 
 			
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+");";
-			console.log(query);
+			
 
 			const client= new Client(database['eicu']); 
 
@@ -192,7 +237,7 @@ module.exports = {
 
 			client.connect();
 			client.query(query,icd9codes,(err, res) => {
-  			
+  				
   				if(!err) {
     				
 					return callback(null,res.rows);

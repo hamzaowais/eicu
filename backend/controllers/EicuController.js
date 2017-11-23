@@ -48,13 +48,15 @@ module.exports = {
 				}
 			});
 
+
+			//console.log(targetHeaders);
 			targetHeaders.forEach(function(header){
 				if(eachRow[header]==-1){
 					flagremove=1;
 				}
 			});
 
-			if(flagremove==0&&flaginput==0){
+			if(flagremove==0 && flaginput==0){
 				trimmedOutput.push(eachRow);
 			}
 
@@ -73,8 +75,8 @@ module.exports = {
 			
 				minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
 
-				if(minLengthPatientIds>=2000){
-					minLengthPatientIds=2000;
+				if(minLengthPatientIds>=10000){
+					minLengthPatientIds=10000;
 				}
 
 
@@ -154,14 +156,14 @@ module.exports = {
 		Object.keys(inputFeatures).forEach(function(label){
 			for(i=1;i<=inputFeatures[label].history;i++){
 				headers.push(label+'_hist_'+i);
-				inputHeaders.push(label);
+				inputHeaders.push(label+'_hist_'+i);
 			}
 		});
 
 		Object.keys(outputFeatures).forEach(function(label){
 			for(i=1;i<=outputFeatures[label].future;i++){
 				headers.push(label+'_fut_'+i);
-				targetHeaders.push(label);
+				targetHeaders.push(label+'_fut_'+i);
 			}
 		});
 
@@ -454,11 +456,24 @@ module.exports = {
 
 				var wflagv=0;
 
+				var tempLen=patientIds.length;
+				var patients=[];
+				patientIds.forEach(function(patientId,index){
+					 var currentInfo ={
+						patientId:patientId,
+						length:tempLen,
+						current:index
+					}
+					patients.push(currentInfo);
+				});
 
-				async.eachSeries(patientIds, function(patientId, callback) {
+
+				async.eachSeries(patients, function(currentPatient, callback) {
+					var patientId= currentPatient.patientId;
 
     			// Perform operation on file here.
-    				console.log('Processing PatientID ' + patientId);
+    				//console.log('Processing PatientID ' + patientId);
+    				console.log('Progeress:'+ Math.round((currentPatient.current/currentPatient.length)*100));
 
     				//Get Vital Sign Data 
     				return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
@@ -506,6 +521,9 @@ module.exports = {
 											}else{
 												fileName=validationDatafileName;
 
+											}
+											if(trimmedDataVitalSignLabDiagnosisPredictHist.length==0){
+												return callback();
 											}
 
 				    						if(wflagt==0 && fileName==trainingDatafileName){

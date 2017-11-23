@@ -33,6 +33,10 @@ module.exports = {
 		try{
 
 			
+
+			if(icd9codes.length==0){
+				return callback(null, []);
+			}
 			var queryParams=[patientId];
 
 			var params=[];
@@ -80,6 +84,10 @@ module.exports = {
 	getLabData: function(patientId,labItems,  callback){
 		try{
 
+
+			if(labItems.length==0){
+				return callback(null, []);
+			}
 			
 			var queryParams=[patientId];
 
@@ -165,12 +173,16 @@ module.exports = {
 
 
 			var params = [];
+
+			if(icd9codes.length==0){
+				return callback(null, []);
+			}
 			
 			for(var i = 1; i <= icd9codes.length; i++) {
   				params.push('$' + i);
 			}
 
-			console.log(icd9codes);
+			
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+");";
 			console.log(query);
 

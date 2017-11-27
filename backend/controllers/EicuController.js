@@ -142,7 +142,7 @@ module.exports = {
 
 	},
 	getDataHeaders: function(inputFeatures, outputFeatures,callback){
-		var headers=["patientunitstayid","time", "diagnosis", "diagnosisstring" , "icd9code"];
+		var headers=["patientunitstayid","time", "diagnosis", "firstdiagnosis","diagnosisstring" ,"icd9code"];
 
 		var inputHeaders=[];
 		var targetHeaders=[];
@@ -223,7 +223,7 @@ module.exports = {
 			
 			var minTime=dataVitalSignLab[0].time;
 			var diagnosis=0;
-			if(icd9codes.length>0){
+			if(diagnosisData.length>0){
 				diagnosis=1;
 			}
 
@@ -231,8 +231,10 @@ module.exports = {
 				dataVitalSignLab[index]['diagnosis']=diagnosis;
 				dataVitalSignLab[index]['diagnosisstring']=-1;
 				dataVitalSignLab[index]['icd9code']=-1;
+				dataVitalSignLab[index]['firstdiagnosis']=-1;
 			});
 
+			var firstdiagnosis=1000000000000000000;
 
 			diagnosisData.forEach(function(eachdiagnosis){
 
@@ -242,13 +244,22 @@ module.exports = {
 				var diagnosisstring=eachdiagnosis.diagnosisstring;
 				var icd9code= eachdiagnosis.icd9code;
 
+				firstdiagnosis=Math.min(firstdiagnosis,time);
+
 				
 				var ind= Math.round((time-minTime)/60);
 
-				if(ind>0 && ind < dataVitalSignLab.length){	
+				if(ind>=0 && ind < dataVitalSignLab.length){	
 					dataVitalSignLab[ind]['diagnosisstring']=diagnosisstring;
 					dataVitalSignLab[ind]['icd9code']=icd9code;
 
+				}
+			});
+
+
+			dataVitalSignLab.forEach(function(eachVitalSign,index){
+				if(firstdiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstdiagnosis']=firstdiagnosis;
 				}
 			});
 			
@@ -256,7 +267,7 @@ module.exports = {
 			return callback(err, dataVitalSignLab);
 		});
 	}, 
-	getMergeLabData: function(patientId,dataVitalSign,labItems,callback){
+	getMergeLabData: function(patientId,dataVitalSign,labItems, labRepeat, callback){
 		
 		//get all LabData with patient ID with items in the labItems
 		return EicuModel.getLabData(patientId,labItems,function(err,labReading){
@@ -285,12 +296,14 @@ module.exports = {
 
 				var time=eachLabReading.labresultoffset;
 				var label=eachLabReading.labname;
-				var val= eachLabReading.labresult;
+				var val= Number(eachLabReading.labresult);
 
 				
 				var ind= Math.round((time-minTime)/60);
 
-				if(ind>0 && ind < dataVitalSign.length){
+
+
+				if(ind>=0 && ind < dataVitalSign.length && val != NaN && val>0){
 
 				
 				var timeDif=Math.abs(tempLabEvents[ind].time-time);
@@ -301,6 +314,13 @@ module.exports = {
 					tempLabEvents[ind][label].timeDif=timeDif;
 					tempLabEvents[ind][label].val=val;
 					dataVitalSign[ind][label]=val;
+					var maxInd=dataVitalSign.length;
+					for(var i =1;i<labRepeat;i++){
+						var indRepeat=i+ind;
+						if(indRepeat < maxInd){
+							dataVitalSign[indRepeat][label]=val;
+						}
+					}
 				}
 				}
 			});
@@ -408,12 +428,15 @@ module.exports = {
 	generateReport: function(inputData,callback){
 		try{
 
+			var headermap={'patientunitstayid':'CaseId','observationtime24':'24hTimestamp','temperature':'Temp','heartrate':'Pulse','respiration':'Resp','glasgow_coma_score':'Score_(Glasgow_Coma_Scale)','bedside glucose':'Blood_Glucose','WBC x 1000':'WBC_(WHITE_BLOOD_COUNT)','systemicsystolic':'Systolic_BP','map':'MAP','creatinine':'CREATININE_SERUM','PT - INR':'INR','PTT':'PTT','platelets x 1000':'PLATELET_COUNT','total bilirubin':'BILIRUBIN__TOTAL','lactate':'LACTATE__WHOLE_BLOOD','heartrate_hist_1':'HR_Hist{1}','heartrate_hist_2':'HR_Hist{2}','heartrate_hist_3':'HR_Hist{3}','systemicsystolic_hist_1':'SBP_Hist{1}','systemicsystolic_hist_2':'SBP_Hist{2}','systemicsystolic_hist_3':'SBP_Hist{3}','map_hist_1':'MAP_Hist{1}','map_hist_2':'MAP_Hist{2}','map_hist_3':'MAP_Hist{3}','heartrate_fut_1':'HR_Predict{1}','heartrate_fut_2':'HR_Predict{2}','heartrate_fut_3':'HR_Predict{3}','systemicsystolic_fut_1':'SBP_Predict{1}','systemicsystolic_fut_2':'SBP_Predict{2}','systemicsystolic_fut_3':'SBP_Predict{3}','map_fut_1':'MAP_Predict{1}','map_fut_2':'MAP_Predict{2}','map_fut_3':'MAP_Predict{3}'};
 
 			var icd9Codes=inputData.icd9codes;
 
 			var  inputFeatures=inputData.inputfeatures;
 
 			var outputFeatures=inputData.targetfeatures;
+
+			var labRepeat=24;
 
 			var labItems= [];
 
@@ -473,7 +496,7 @@ module.exports = {
 
     			// Perform operation on file here.
     				//console.log('Processing PatientID ' + patientId);
-    				console.log('Progeress:'+ Math.round((currentPatient.current/currentPatient.length)*100));
+    				console.log('Progeress:'+ ((currentPatient.current/currentPatient.length)*100));
 
     				//Get Vital Sign Data 
     				return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
@@ -486,7 +509,7 @@ module.exports = {
     					}
 
     					//Get Data from the lab table
-    					return module.exports.getMergeLabData(patientId, dataVitalSign, labItems,function(err,dataVitalSignLab){
+    					return module.exports.getMergeLabData(patientId, dataVitalSign, labItems, labRepeat,function(err,dataVitalSignLab){
     						if(err){
     							return callback(err);
     						}
@@ -514,7 +537,27 @@ module.exports = {
 
     									//Remove Rows with any null outputs and all null input
     									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
+    										var outputData=[];
+    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+    											temp={};
+    											headers.forEach(function(header){
+    												if(headermap[header]){
+    													temp[headermap[header]]=eachRow[header];
+    												}else{
+    													temp[header]=eachRow[header];
+    												}
+    											});
+    											outputData.push(temp);
+    										});
 
+    										var newHeaders=[];
+    										headers.forEach(function(header){
+    											if(headermap[header]){
+    												newHeaders.push(headermap[header]);
+    											}else{
+    												newHeaders.push(header);
+    											}
+    										});
 											var fileName='';
 											if(patientIdDic[patientId].file=='train'){
 												fileName=trainingDatafileName;
@@ -522,17 +565,19 @@ module.exports = {
 												fileName=validationDatafileName;
 
 											}
-											if(trimmedDataVitalSignLabDiagnosisPredictHist.length==0){
+											if(outputData.length==0){
 												return callback();
 											}
 
 				    						if(wflagt==0 && fileName==trainingDatafileName){
 				    							wflagt=1;
-				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers});
+				    						var csv = json2csv({ data: outputData, fields: newHeaders});
+
+				    						
 				 							
 											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
 				  								if (err) return callback(err);
-				  							console.log('file saved');
+				  							//console.log('file saved');
 				    						return callback();
 											});
 				    							
@@ -540,21 +585,21 @@ module.exports = {
 
 				    						if(wflagv==0 && fileName==validationDatafileName){
 				    							wflagv=1;
-				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers});
+				    						var csv = json2csv({ data: outputData, fields: newHeaders});
 				 							
 											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
 				  								if (err) return callback(err);
-				  							console.log('file saved');
+				  							//console.log('file saved');
 				    						return callback();
 											});
 				    							
 				    						}
 
-				    						var csv = json2csv({ data: trimmedDataVitalSignLabDiagnosisPredictHist, fields: headers, hasCSVColumnTitle:false});
+				    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
 				 							csv="\n"+csv;
 											return fs.appendFile('./dataset/'+fileName, csv, function(err) {
 				  								if (err) return callback(err);
-				  							console.log('file saved');
+				  							//console.log('file saved');
 				    						return callback();
 	    									
 	    									});

@@ -290,6 +290,7 @@ module.exports = {
 			});
 
 
+
 			labReading.forEach(function(eachLabReading){
 
 				
@@ -436,7 +437,7 @@ module.exports = {
 
 			var outputFeatures=inputData.targetfeatures;
 
-			var labRepeat=24;
+			var labRepeat=0;
 
 			var labItems= [];
 
@@ -527,6 +528,7 @@ module.exports = {
     								if(err){
     									return callback(err);
     								}
+
 
     								//Get proper Headers as per the input
 

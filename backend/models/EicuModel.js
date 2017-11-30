@@ -6,6 +6,8 @@ var database 	= require('../config/database.js');
 
 
 module.exports = {
+	
+
 	getDiagnosis: function(callback){
 		try{
 			
@@ -29,6 +31,38 @@ module.exports = {
 		}
 
 	},
+	getPatientData: function(patientId , callback){
+		try{
+			
+			var queryParams=[patientId];
+
+			var query="select gender, age, unitdischargeoffset, hospitaldischargestatus from eicu.patiet where patientunitstayid= $1";
+			
+			const client= new Client(database['eicu']); 
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
 	getDiagnosisData: function(patientId, icd9codes,  callback){
 		try{
 
@@ -42,7 +76,7 @@ module.exports = {
 			var params=[];
 			for(var i = 1; i <= icd9codes.length; i++) {
   				params.push('$' + (i+1));
-  				queryParams.push(icd9codes[i]);
+  				queryParams.push(icd9codes[i-1]);
 			}
 
 
@@ -94,12 +128,14 @@ module.exports = {
 			var params=[];
 			for(var i = 1; i <= labItems.length; i++) {
   				params.push('$' + (i+1));
-  				queryParams.push(labItems[i]);
+  				queryParams.push(labItems[i-1]);
 			}
 
 
 
 			var query="select labResultOffset, labName, labResult from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") order by labResultOffset;";
+
+
 			
 
 
@@ -185,7 +221,7 @@ module.exports = {
 
 			
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code not in ("+ params.join(',')+");";
-			console.log(query);
+			
 
 			const client= new Client(database['eicu']); 
 

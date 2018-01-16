@@ -20,7 +20,7 @@ module.exports = {
 	"glycus":{
 		"host"     : 'localhost',
   		"user"     : 'root',
-  		"password" : 'paytm@123',
+  		"password" : '1234',
   		"database" : 'glycus'
 	},
 	"demo_mimic":{

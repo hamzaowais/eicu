@@ -41,7 +41,7 @@ module.exports = {
 			var flagremove=0;
 
 			var flaginput=1;
-			//check if all the values
+
 			inputHeaders.forEach(function(header){
 				if(eachRow[header]!=-1){
 					flaginput=0;
@@ -67,64 +67,74 @@ module.exports = {
 
 	},
 	
-	getPatients: function(icd9codes, callback){
+	getPatients: function(icd9codes, excludeIcd9Codes,callback){
 
-		return EicuModel.getPatientsIdsWithIcd9(icd9codes,function(err, resultsPatientIdsObjwithDiagnosis){
-			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
+		return EicuModel.getPatientsIdsWithIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithDiagnosis){
 
-			
+			console.log(resultsPatientIdsObjwithDiagnosis);
+			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
+
+				
 				minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
-
-				if(minLengthPatientIds>=10000){
-					minLengthPatientIds=10000;
-				}
-
-
 
 
 				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
 				var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
 
-				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
-				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
-
-
-
+				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
+				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
 
 				var patientIds=[];
 				var patientIdDic={};
 
 
-				var minSoFar=Math.min(trainWithDiagnosis.length,validationWithDiagnosis.length, trainWithoutDiagnosis.length,validationWithoutDiagnosis.length);
+				var maxSoFar=Math.max(trainWithDiagnosis.length,validationWithDiagnosis.length, trainWithoutDiagnosis.length,validationWithoutDiagnosis.length);
 
-				for(var i=0;i<minSoFar;i++){
-					patientIds.push(trainWithDiagnosis[i].patientunitstayid);
-					patientIdDic[trainWithDiagnosis[i].patientunitstayid]={
-						file:'train',
-						diagnosis:false
+				console.log(maxSoFar);
+
+				trainWithDiagnosisLength=trainWithDiagnosis.length;
+				trainWithoutDiagnosisLength=trainWithoutDiagnosis.length;
+				validationWithDiagnosisLength=validationWithDiagnosis.length
+				validationWithoutDiagnosisLength=validationWithoutDiagnosis.length;
+				for(var i=0;i<maxSoFar;i++){
+					
+
+					if(i<trainWithDiagnosisLength){
+						patientIds.push(trainWithDiagnosis[i].patientunitstayid);
+						patientIdDic[trainWithDiagnosis[i].patientunitstayid]={
+							file:'train',
+							diagnosis:false
+						}
 					}
-					patientIds.push(trainWithoutDiagnosis[i].patientunitstayid);
-					patientIdDic[trainWithoutDiagnosis[i].patientunitstayid]={
-						file:'train',
-						diagnosis:false
+					if(i<trainWithoutDiagnosisLength){
+						patientIds.push(trainWithoutDiagnosis[i].patientunitstayid);
+						patientIdDic[trainWithoutDiagnosis[i].patientunitstayid]={
+							file:'train',
+							diagnosis:false
+						}
 					}
 
-
-					patientIds.push(validationWithDiagnosis[i].patientunitstayid);
-					patientIdDic[validationWithDiagnosis[i].patientunitstayid]={
-						file:'validation',
-						diagnosis:false
+					if(i<validationWithDiagnosisLength){
+						patientIds.push(validationWithDiagnosis[i].patientunitstayid);
+						patientIdDic[validationWithDiagnosis[i].patientunitstayid]={
+							file:'validation',
+							diagnosis:false
+						}
 					}
-					patientIds.push(validationWithoutDiagnosis[i].patientunitstayid);
-					patientIdDic[validationWithoutDiagnosis[i].patientunitstayid]={
-						file:'validation',
-						diagnosis:false
+					if(i<validationWithoutDiagnosisLength){
+						patientIds.push(validationWithoutDiagnosis[i].patientunitstayid);
+						patientIdDic[validationWithoutDiagnosis[i].patientunitstayid]={
+							file:'validation',
+							diagnosis:false
+						}
 					}
 
 				}
 
 
+				console.log('hamza');
 
+	
 
 
 				return callback(null, patientIds, patientIdDic);
@@ -142,7 +152,7 @@ module.exports = {
 
 	},
 	getDataHeaders: function(inputFeatures, outputFeatures,callback){
-		var headers=["patientunitstayid","time", "diagnosis", "firstdiagnosis","diagnosisstring" ,"icd9code"];
+		var headers=["patientunitstayid","time", "diagnosis", "firstdiagnosis","diagnosisstring" ,"icd9code","sex","age","lengthofStay","died","dischargeTime"];
 
 		var inputHeaders=[];
 		var targetHeaders=[];
@@ -173,6 +183,8 @@ module.exports = {
 	}, 
 	getDataWithHistoryPrediction: function(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures,callback){
 		
+
+		var dataVitalSignLabDiagnosisLength= dataVitalSignLabDiagnosis.length;
 		Object.keys(inputFeatures).forEach(function(label){
 			//label=label.toLowerCase();
 			if(inputFeatures[label].history>0){
@@ -181,7 +193,7 @@ module.exports = {
 					dataVitalSignLabDiagnosis.forEach(function(eachData,index){
 						dataVitalSignLabDiagnosis[index][label+'_hist_'+i]=-1;
 						histInd=index-i;
-						if(histInd>=0 && histInd<dataVitalSignLabDiagnosis.length){
+						if(histInd>=0 && histInd<dataVitalSignLabDiagnosisLength){
 							dataVitalSignLabDiagnosis[index][label+'_hist_'+i]=dataVitalSignLabDiagnosis[histInd][label];
 						}
 					});
@@ -198,7 +210,7 @@ module.exports = {
 					dataVitalSignLabDiagnosis.forEach(function(eachData,index){
 						dataVitalSignLabDiagnosis[index][label+'_fut_'+i]=-1;
 						futInd=index+i;
-						if(futInd>=0 && futInd<dataVitalSignLabDiagnosis.length){
+						if(futInd>=0 && futInd<dataVitalSignLabDiagnosisLength){
 							dataVitalSignLabDiagnosis[index][label+'_fut_'+i]=dataVitalSignLabDiagnosis[futInd][label];
 						}
 					});
@@ -211,8 +223,9 @@ module.exports = {
 
 	}, 
 
-	getMergeDiagnosisTable: function(patientId,dataVitalSignLab,icd9codes,callback){
+	getMergeDiagnosisPatientTable: function(patientId,dataVitalSignLab,icd9codes,callback){
 		
+		var dataVitalSignLabLength=dataVitalSignLab.length;
 		//get all LabData with patient ID with items in the labItems
 		return EicuModel.getDiagnosisData(patientId, icd9codes,function(err,diagnosisData){
 			if(err){
@@ -249,7 +262,7 @@ module.exports = {
 				
 				var ind= Math.round((time-minTime)/60);
 
-				if(ind>=0 && ind < dataVitalSignLab.length){	
+				if(ind>=0 && ind < dataVitalSignLabLength){	
 					dataVitalSignLab[ind]['diagnosisstring']=diagnosisstring;
 					dataVitalSignLab[ind]['icd9code']=icd9code;
 
@@ -263,12 +276,40 @@ module.exports = {
 				}
 			});
 			
+			return EicuModel.getPatientData(patientId ,function(err,patientData){
+					var sex=-1;
+					var age = -1;
+					var lengthofStay=-1;
+					var died=-1;
+					var dischargeTime=-1;
 
-			return callback(err, dataVitalSignLab);
+					if(patientData.length>0){
+						if(patientData[0].gender=='Male'){
+							sex=1;
+						}else{
+							sex=0;
+						}
+						age=patientData[0].age;
+						dischargeTime=patientData[0].unitdischargeoffset;
+						if(patientData[0].hospitaldischargestatus=='Alive'){
+							died=0;
+						}else if(patientData[0].hospitaldischargestatus=='Expired'){
+							died=1;
+						}
+					}
+					dataVitalSignLab.forEach(function(eachVitalSign,index){
+						dataVitalSignLab[index]['age']=age;
+						dataVitalSignLab[index]['lengthofStay']=lengthofStay;
+						dataVitalSignLab[index]['died']=died;
+						dataVitalSignLab[index]['dischargeTime']=dischargeTime
+					});
+					return callback(err, dataVitalSignLab);
+			});
 		});
 	}, 
 	getMergeLabData: function(patientId,dataVitalSign,labItems, labRepeat, callback){
 		
+		var dataVitalSignLength=dataVitalSign.length;
 		//get all LabData with patient ID with items in the labItems
 		return EicuModel.getLabData(patientId,labItems,function(err,labReading){
 			if(err){
@@ -304,7 +345,7 @@ module.exports = {
 
 
 
-				if(ind>=0 && ind < dataVitalSign.length && val != NaN && val>0){
+				if(ind>=0 && ind < dataVitalSignLength && val != NaN && val>0){
 
 				
 				var timeDif=Math.abs(tempLabEvents[ind].time-time);
@@ -315,7 +356,7 @@ module.exports = {
 					tempLabEvents[ind][label].timeDif=timeDif;
 					tempLabEvents[ind][label].val=val;
 					dataVitalSign[ind][label]=val;
-					var maxInd=dataVitalSign.length;
+					var maxInd=dataVitalSignLength;
 					for(var i =1;i<labRepeat;i++){
 						var indRepeat=i+ind;
 						if(indRepeat < maxInd){
@@ -373,7 +414,12 @@ module.exports = {
 
 			var index=0;
 			var decomposedIndex=0;
-			while(index<vitalsignReading.length && decomposedIndex<vitalsignTempDecomposed.length){
+
+			var vitalsignReadingLength=vitalsignReading.length;
+
+			var vitalsignTempDecomposedLength=vitalsignTempDecomposed.length
+
+			while(index<vitalsignReadingLength && decomposedIndex<vitalsignTempDecomposedLength){
 				
 				var currentVitalSign=vitalsignReading[index];
 				var currentVitalSignDecomposed=vitalsignTempDecomposed[decomposedIndex];
@@ -433,6 +479,16 @@ module.exports = {
 
 			var icd9Codes=inputData.icd9codes;
 
+			var excludeIcd9Codes=[];
+
+
+			//Exclude all icd9codes for septic shock
+			//excludeIcd9Codes=["785.52, R65.21","785.52, 785.52, R65.21","038.9, 785.52, R65.21", "995.90"];
+
+			//Exclude all icd9codes for sepsis
+			excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
+
+
 			var  inputFeatures=inputData.inputfeatures;
 
 			var outputFeatures=inputData.targetfeatures;
@@ -443,8 +499,19 @@ module.exports = {
 
 			var vitalReadings=[];
 
+
+			var minDiagnosisTime=4;
+
+			var minReading=8;
+
 			var trainingDatafileName="trainingData_"+Math.floor(Date.now() / 1000)+".csv";
 			var validationDatafileName="validationData_"+Math.floor(Date.now() / 1000)+".csv";
+
+			var patientTrainingWithDiagnosis = 0;
+			var patientTrainingWithoutDiagnosis = 0;
+			var validationTrainingWithDiagnosis = 0;
+			var validationTrainingWithoutDiagnosis = 0;
+
 
 
 
@@ -472,7 +539,7 @@ module.exports = {
 
 
 			//Get all the patients with the icd9codes.
-			return module.exports.getPatients(icd9Codes,function(err, patientIds, patientIdDic){
+			return module.exports.getPatients(icd9Codes, excludeIcd9Codes,function(err, patientIds, patientIdDic){
 				
 				
 
@@ -482,6 +549,8 @@ module.exports = {
 
 				var tempLen=patientIds.length;
 				var patients=[];
+
+				console.log(patientIds);
 				patientIds.forEach(function(patientId,index){
 					 var currentInfo ={
 						patientId:patientId,
@@ -492,12 +561,28 @@ module.exports = {
 				});
 
 
+
+
 				async.eachSeries(patients, function(currentPatient, callback) {
 					var patientId= currentPatient.patientId;
+					
 
     			// Perform operation on file here.
     				//console.log('Processing PatientID ' + patientId);
     				console.log('Progeress:'+ ((currentPatient.current/currentPatient.length)*100));
+
+    				console.log("Nummber of Patients in the training data set with Diagnosis: ");
+    				console.log(patientTrainingWithDiagnosis);
+
+    				console.log("Nummber of Patients in the training data set without Diagnosis: ");
+    				console.log(patientTrainingWithoutDiagnosis);
+
+    				console.log("Nummber of Patients in the validation data set with Diagnosis: ");
+    				console.log(validationTrainingWithDiagnosis);
+
+
+    				console.log("Nummber of Patients in the validation data set without Diagnosis: ");
+    				console.log(validationTrainingWithoutDiagnosis);
 
     				//Get Vital Sign Data 
     				return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
@@ -516,7 +601,7 @@ module.exports = {
     						}
 
     						// get data from the diagnosis Table;
-    						return module.exports.getMergeDiagnosisTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
+    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
 
     							if(err){
     									return callback(err);
@@ -539,6 +624,22 @@ module.exports = {
 
     									//Remove Rows with any null outputs and all null input
     									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
+    										
+    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+    											return callback();
+    										}
+
+    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+    											var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+    											var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+    											if(diagnosis==1){
+    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
+    													return callback();
+    												}
+    											}
+    										}
+
     										var outputData=[];
     										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
     											temp={};
@@ -552,6 +653,8 @@ module.exports = {
     											outputData.push(temp);
     										});
 
+
+
     										var newHeaders=[];
     										headers.forEach(function(header){
     											if(headermap[header]){
@@ -560,13 +663,29 @@ module.exports = {
     												newHeaders.push(header);
     											}
     										});
+
+
+
+
+
 											var fileName='';
 											if(patientIdDic[patientId].file=='train'){
 												fileName=trainingDatafileName;
+												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+    												patientTrainingWithDiagnosis = patientTrainingWithDiagnosis+1;
+												}else{
+													patientTrainingWithoutDiagnosis = patientTrainingWithoutDiagnosis+1;
+												}
 											}else{
 												fileName=validationDatafileName;
+												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+    												validationTrainingWithDiagnosis = validationTrainingWithDiagnosis+1
+												}else{
+													validationTrainingWithoutDiagnosis = validationTrainingWithoutDiagnosis+1;
+												}
 
 											}
+											console.log(outputData.length);
 											if(outputData.length==0){
 												return callback();
 											}
@@ -576,11 +695,10 @@ module.exports = {
 				    						var csv = json2csv({ data: outputData, fields: newHeaders});
 
 				    						
-				 							
 											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
 				  								if (err) return callback(err);
-				  							//console.log('file saved');
-				    						return callback();
+				  									//console.log('file saved');
+				    								return callback();
 											});
 				    							
 				    						}
@@ -590,12 +708,16 @@ module.exports = {
 				    						var csv = json2csv({ data: outputData, fields: newHeaders});
 				 							
 											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) return callback(err);
+				  								if (err) {
+				  								return callback(err);	
+				  								}
 				  							//console.log('file saved');
-				    						return callback();
+				    							return callback();
 											});
 				    							
 				    						}
+
+
 
 				    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
 				 							csv="\n"+csv;
@@ -625,13 +747,33 @@ module.exports = {
     				if( err ) {
       					// One of the iterations produced an error.
       					// All processing will now stop.
+      					console.log(err);
       					console.log('A file failed to process');
     				} else {
       					console.log('All files have been processed successfully');
     				}
     				var output={};
+
     				output.data_train_url= process.env.PWD + '/dataset/'+trainingDatafileName;
     				output.data_validation_url= process.env.PWD + '/dataset/'+validationDatafileName;
+
+    			
+		
+    				console.log("Nummber of Patients in the training data set with Diagnosis: ");
+    				console.log(patientTrainingWithDiagnosis);
+
+    				console.log("Nummber of Patients in the training data set without Diagnosis: ");
+    				console.log(patientTrainingWithoutDiagnosis);
+
+    				console.log("Nummber of Patients in the validation data set with Diagnosis: ");
+    				console.log(validationTrainingWithDiagnosis);
+
+
+    				console.log("Nummber of Patients in the validation data set without Diagnosis: ");
+    				console.log(validationTrainingWithoutDiagnosis);
+
+
+
 
     				return callback(null,output);
 				});				

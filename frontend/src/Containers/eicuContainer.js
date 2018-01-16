@@ -546,9 +546,58 @@ class ReportingContainer extends Component {
 	}
 	componentDidMount() {
 
-		axios.get(backendlink.backendlink+'/getInitialData')
+		axios.get(backendlink.backendlink+'/getglycudata')
 		.then(function (response) {
     		
+    		var patientsTrainingData=response.patients;
+			var patientsValidationData=response.patients.slice(0);
+			var infustionData=response.infustionData;
+			var nonInfustionData=response.nonInfustionData;
+			var labData = response.labData;
+			var flowsheetData = response.flowsheetData;
+
+			patientsTrainingData.forEach(function(row,index){
+				row['add']=row['mrn'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+			patientsValidationData.forEach(function(row,index){
+				row['add']=row['mrn'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+			infustionData.forEach(function(row,index){
+				row['add']=row['medication'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+
+			nonInfustionData.forEach(function(row,index){
+				row['add']=row['medication'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+
+			labData.forEach(function(row,index){
+				row['add']=row['component_name'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+			flowsheetData.forEach(function(row,index){
+				row['add']=row['row_name'];
+				row['select']='not selected';
+				row['index']=index;	
+			});
+
+			console.log(flowsheetData);
+
+
+
     		var tableIcd9=this.state.tableIcd9;
     		var tableItems=this.state.tableItems;
     		var tableItemsTarget=this.state.tableItemsTarget;

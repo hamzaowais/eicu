@@ -71,18 +71,26 @@ module.exports = {
 
 		return EicuModel.getPatientsIdsWithIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithDiagnosis){
 
-			console.log(resultsPatientIdsObjwithDiagnosis);
+			console.log(resultsPatientIdsObjwithDiagnosis.length);
 			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
-
+				console.log(resultsPatientIdsObjwithoutDiagnosis.length);
 				
 				minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
 
 
-				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
-				var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
+				// var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
+				// var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
 
-				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
-				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
+				// var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
+				// var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
+
+
+				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis;
+				var validationWithDiagnosis=[];
+
+				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis;
+				var validationWithoutDiagnosis=[];
+
 
 				var patientIds=[];
 				var patientIdDic={};
@@ -117,14 +125,14 @@ module.exports = {
 					if(i<validationWithDiagnosisLength){
 						patientIds.push(validationWithDiagnosis[i].patientunitstayid);
 						patientIdDic[validationWithDiagnosis[i].patientunitstayid]={
-							file:'validation',
+							file:'train',
 							diagnosis:false
 						}
 					}
 					if(i<validationWithoutDiagnosisLength){
 						patientIds.push(validationWithoutDiagnosis[i].patientunitstayid);
 						patientIdDic[validationWithoutDiagnosis[i].patientunitstayid]={
-							file:'validation',
+							file:'train',
 							diagnosis:false
 						}
 					}
@@ -296,17 +304,475 @@ module.exports = {
 						}else if(patientData[0].hospitaldischargestatus=='Expired'){
 							died=1;
 						}
+
+						if(patientData[0].unitdischargeoffset>0){
+							lengthofStay=patientData[0].unitdischargeoffset/60;
+						}
+
+						
 					}
 					dataVitalSignLab.forEach(function(eachVitalSign,index){
 						dataVitalSignLab[index]['age']=age;
 						dataVitalSignLab[index]['lengthofStay']=lengthofStay;
 						dataVitalSignLab[index]['died']=died;
-						dataVitalSignLab[index]['dischargeTime']=dischargeTime
+						dataVitalSignLab[index]['dischargeTime']=dischargeTime;
+						dataVitalSignLab[index]['sex']=sex;
+
 					});
 					return callback(err, dataVitalSignLab);
 			});
 		});
 	}, 
+	getsofaData: function(sofa, vassodata, callback){
+		if(sofa==0){
+			return callback(null, vassodata);
+		}
+		var pao2=-1;
+		var fio2=-1;
+		var pafiFio2ration=-1;
+		var gcs=-1;
+		var map=-1;
+		var dopamine=-1
+		var dobutamine=-1
+		var epinephrine=-1;
+		var norepinephrine=-1;
+		var bilirubin=-1;
+		var platelets=-1;
+		var creatinine=-1;
+		var systolicBP=-1;
+		var isVent=0;
+		var urine=-1;
+		var pulse=-1;
+		var resp=-1;
+		var lastsofa=0;
+		var sepsis3=0;
+		var sepsis3SepticShock=0;
+		var lactate=-1;
+
+
+		vassodata.forEach(function(data){
+			if(data["paO2"]&&data["paO2"]>0){
+				pao2=data["paO2"]
+			}
+			if(data["FiO2"]&&data["FiO2"]>0){
+				fio2=data["FiO2"]
+			}
+			if(data["gcs"]&&data["gcs"]>0){
+				gcs=data["gcs"]
+			}
+			if(data["map"]&&data["map"]>0){
+				map=data["map"]
+			}
+			if(data["rate_dopamine"]&&data["rate_dopamine"]>0){
+				dopamine=data["rate_dopamine"]
+			}
+			if(data["rate_dobutamine"]&&data["rate_dobutamine"]>0){
+				dobutamine=data["rate_dobutamine"]
+			}
+			if(data["rate_epinephrine"]&&data["rate_epinephrine"]>0){
+				epinephrine=data["rate_epinephrine"]
+			}
+			if(data["rate_norepinephrine"]>0){
+				norepinephrine=data["rate_norepinephrine"]
+			}
+			if(data["total bilirubin"]&&data["total bilirubin"]>0){
+				bilirubin=data["total bilirubin"]
+			}
+			if(data["platelets x 1000"]&&data["platelets x 1000"]>0){
+				platelets=data["platelets x 1000"]
+			}
+			if(data["creatinine"]&&data["creatinine"]>0){
+				creatinine=data["creatinine"]
+			}
+			if(data["systemicsystolic"]&&data["systemicsystolic"]>0){
+				systolicBP=data["systemicsystolic"]
+			}
+			if(data["Vent Rate"]&&data["Vent Rate"]>0){
+				isVent=1;
+			}
+			if(data["urine"]&&data["urine"]>0){
+				urine=data["urine"];
+			}
+			if(data["heartrate"]&&data["heartrate"]>0){
+				pulse=data["heartrate"];
+			}
+
+			if(data["respiration"]&&data["respiration"]>0){
+				resp=data["respiration"];
+			}
+
+			if(data["lactate"]&&data["lactate"]>0){
+				lactate=data["lactate"];
+			}
+
+
+			var respiratory=0;
+			var nervous=0;
+			var cardiovascular=0;
+			var liver=0;
+			var coagulation=0;
+			var kidneys=0;
+
+			
+
+			if(pao2>0 && fio2>0){
+
+				pafiFio2ration=(pao2*100)/fio2;
+				
+				if(pafiFio2ration>=400){
+					respiratory=0;
+
+				}
+				if(pafiFio2ration<400){
+					respiratory=1;
+
+				}
+				if(pafiFio2ration<300){
+					respiratory=2;
+				}
+				if(pafiFio2ration<200){
+					respiratory=3;
+				}
+
+				if(pafiFio2ration<100){
+					respiratory=4;
+				}
+			}
+
+			if(gcs>0){
+				if(gcs<6){
+					nervous=4;
+				}
+				else if(gcs>=6 && gcs<10){
+					nervous=3
+				}else if(gcs>=10 && gcs<13){
+					nervous=2
+				}else if(gcs>=13 && gcs<15){
+					nervous=1
+				}else{
+					nervous=0;
+				}
+			}
+			if(map>0){
+				if(map>=70){
+					cardiovascular=0;
+				}else{
+					cardiovascular=1;
+					if(dopamine>0 || dobutamine>0){
+						cardiovascular=2;
+					}
+					if(dopamine>5 || epinephrine>0 || norepinephrine>0){
+						cardiovascular=3;
+					}
+					if(dopamine>15 || epinephrine>0.1 || norepinephrine>0.1){
+						cardiovascular=4;
+					}
+
+				}
+			}
+
+			if(bilirubin>0){
+				if(bilirubin>=1.2){
+		        	liver=1;
+		        }
+		        if(bilirubin>=2.0){
+		        	liver=2;
+		        }
+
+		        if(bilirubin>=6.0){
+		        	liver=3;
+		        }
+		        if(bilirubin>=12.0){
+		        	liver=4;
+		        }	
+			}
+
+
+			if(creatinine>0){
+				
+				if(creatinine>=1.2 && creatinine<2.0){
+					kidneys=1;
+				}
+				if(creatinine>=2.0 && creatinine<3.5){
+					kidneys=2
+				}
+				if(creatinine>=3.5 && creatinine<5 ){
+					kidneys=3
+				}
+				if(creatinine>=5){
+					kidneys=4
+				}
+
+
+				
+
+
+			}	
+
+			// if(urine>0){
+			// 	if(urine<500){
+			// 		kidneys=3;
+			// 	}
+			// 	if(urine<200){
+			// 		kidneys=4;
+			// 	}
+			// }	
+	        
+	        if(platelets>0){
+	        	if(platelets<150){
+	        		coagulation=1
+	        	}
+
+	        	if(platelets<100){
+	        		coagulation=2
+	        	}
+	        	if(platelets<50){
+	        		coagulation=3
+	        	}
+	        	if(platelets<20){
+	        		coagulation=4
+	        	}
+	        }
+
+	        
+	        var sofa=coagulation+kidneys+liver+cardiovascular+nervous+respiratory;
+	        var delSofa=sofa-lastsofa;
+	        var qsofa=0;
+
+	        if(cardiovascular>=2 && lactate>=2){
+	        	sepsis3SepticShock=1;
+	        }
+
+	        lastsofa=sofa;
+
+	        if(delSofa>=2){
+	        	sepsis3=1;
+	        }
+
+	        if(systolicBP<=100 && systolicBP>0){
+	        	qsofa=qsofa+1;
+	        }
+
+	        if(resp>0 && resp>=22){
+	        	qsofa=qsofa+1;
+	        }
+
+	        if(gcs>0 && gcs<15){
+	        	qsofa=qsofa+1;
+	        }
+
+	        data["pao2Fio2ratio"]=pafiFio2ration;
+	        data["cardiovascular"]=cardiovascular;
+	        data["kidneys"]=kidneys;
+	        data["coagulation"]=coagulation;
+	        data["liver"]=liver;
+	        data["respiratory"]=respiratory;
+	        data["nervous"]=nervous;
+	        data["sofa"]=sofa;
+	        data["qsofa"]=qsofa;
+	        data['delSofa']=delSofa;
+	        data['sepsis3']=sepsis3;
+	        data['sepsis3SepticShock']=sepsis3SepticShock;
+	        
+
+		});
+		return callback(null, vassodata);
+
+
+
+	},
+	getVasData:function(patientId,vassopressors,data,callback){
+		if(vassopressors==0){
+			return callback(null, data);
+		}
+
+		var dataLength=data.length;
+		var minTime=data[0].time;
+
+		data.forEach(function(eachdata,index){
+			var vass=["rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine"];
+			vass.forEach(function(eachvasso){
+				data[index][eachvasso]=-1;
+			});
+		});
+
+		return EicuModel.getwt(patientId,function(err,wts){
+			if(err){
+				return callback(err);
+			}
+			var wt= -1;
+			if(wts.length>0 && wts[0].admissionWeight){
+				wt=wts[0].admissionWeight;
+			}
+
+			return EicuModel.getVassoInfusionData(patientId,function(err,vassoinfusionData){
+				if(err){
+					return callback(err);
+				}
+
+				vassoinfusionData.forEach(function(eachVassoData){
+					
+					var time=eachVassoData.infusionoffset;
+					var label=eachVassoData.drugname;
+					var val= Number(eachVassoData.drugrate);
+					var ind= Math.round((time-minTime)/60);
+
+					if(ind>=0 && ind < dataLength && val != NaN && val>0){
+						if(label=="Norepinephrine (ml/hr)" || label =="Norepinephrine ()" || label == "norepinephrine Volume (ml) (ml/hr)" || label== "Norepinephrine"){
+							// convert ml/hr to µg/kg/min
+							if(wt!=-1){
+
+								data[ind]["rate_norepinephrine"]=(val*4/15)/wt;
+							}else{
+								data[ind]["rate_norepinephrine"]=(val*4/15)/75;
+
+							}
+							
+						}
+						if(label=="Levophed (mcg/min)"|| label=="levophed (mcg/min)" || label=="levophed  (mcg/min)" || label=="Norepinephrine (mcg/min)" || label=="Norepinephrine STD 4 mg Dextrose 5% 250 ml (mcg/min)" || label=="Norepinephrine MAX 32 mg Dextrose 5% 250 ml (mcg/min)" || label == "Norepinephrine MAX 32 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 8 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 8 mg Dextrose 5% 250 ml (mcg/min)" || label == "Norepinephrine STD 4 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 32 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 32 mg Dextrose 5% 282 ml (mcg/min)"){
+							// convert µg/min to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_norepinephrine"]=val/wt;	
+							}else{
+								data[ind]["rate_norepinephrine"]=val/75;	
+
+							}
+							
+						}
+						if(label=="Norepinephrine (mcg/kg/min)"){
+							
+							data[ind]["rate_norepinephrine"]=val;
+						}
+						if(label=="Norepinephrine (mcg/kg/hr)"){
+							// convert mcg/kg/hr to µg/kg/min
+							data[ind]["rate_norepinephrine"]=val/60;
+						}
+
+						
+						
+						if(label=="Epinephrine (ml/hr)" || label=="Epinephrine ()"){
+							// convert ml/hr to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_epinephrine"]=(val*2/15)/wt;
+							}else{
+								data[ind]["rate_epinephrine"]=(val*2/15)/75;
+
+							}
+							
+						}
+
+						if(label=="Epinephrine (mcg/min)" || label=="EPINEPHrine(Adrenalin)STD 4 mg Sodium Chloride 0.9% 250 ml (mcg/min)" || label=="EPINEPHrine(Adrenalin)MAX 30 mg Sodium Chloride 0.9% 250 ml (mcg/min)" || label=="EPINEPHrine(Adrenalin)STD 7 mg Sodium Chloride 0.9% 250 ml (mcg/min)"  || label=="EPINEPHrine(Adrenalin)STD 4 mg Sodium Chloride 0.9% 500 ml (mcg/min)" || label=="Epinepherine (mcg/min)"){
+							// convert (mcg/min) to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_epinephrine"]=val/wt;	
+							}else{
+								data[ind]["rate_epinephrine"]=val/75;	
+
+							}
+							
+						}
+
+						if(label=="Epinephrine (mcg/kg/min)"){
+							data[ind]["rate_epinephrine"]=val;
+						}
+
+						if(label=="Epinephrine (mg/kg/min)"){
+							data[ind]["rate_epinephrine"]=val;
+						}
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+							
+						}
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+						}
+
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+						}
+
+						if(label=="Dobutamine (mcg/kg/min)" || label=="DOBUTamine STD 500 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)"|| label=="DOBUTamine MAX 1000 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" ){
+							data[ind]["rate_dobutamine"]=val;	
+						}
+
+						
+
+						if(label=="Dopamine (ml/hr)" || label=="Dopamine ()" || label == "Dopamine"){
+							if(wt!=-1){
+								data[ind]["rate_dopamine"]=(val*800)/(15*wt);	
+							}else{
+								data[ind]["rate_dopamine"]=(val*800)/(15*75);	
+
+							}
+							
+						}
+
+						if(label=="Dopamine (mcg/kg/min)" || label=="DOPamine STD 400 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" || label=="DOPamine MAX 800 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)"  || label=="dopamine (mcg/kg/min)" || label=="DOPamine STD 15 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" || label=="DOPamine STD 400 mg Dextrose 5% 500 ml  Premix (mcg/kg/min)"){
+							data[ind]["rate_dopamine"]=val;
+						}
+
+
+						
+
+
+						
+
+					}
+				});
+
+				return callback(null,data);
+
+			})
+
+		});
+
+	},
+	getMergeAdditionalData: function(patientId, settings, data, callback){
+		var vassopressor=1;
+		var sofa=1;
+		if(settings && settings.vassopressor){
+			vassopressor=1;
+		}
+		if(settings && settings.sofa){
+			sofa=1;
+		}
+
+		return module.exports.getVasData(patientId,vassopressor,data,function(err, vassodata){
+			if(err){
+				return callback(err);
+			}
+			return module.exports.getsofaData(sofa, vassodata, function(err,vassosofadata){
+				if(err){
+					return callback(err);
+
+				}
+				return callback(null, vassosofadata);
+			});
+
+		})
+	},
+
 	getMergeLabData: function(patientId,dataVitalSign,labItems, labRepeat, callback){
 		
 		var dataVitalSignLength=dataVitalSign.length;
@@ -486,7 +952,10 @@ module.exports = {
 			//excludeIcd9Codes=["785.52, R65.21","785.52, 785.52, R65.21","038.9, 785.52, R65.21", "995.90"];
 
 			//Exclude all icd9codes for sepsis
-			excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
+			//excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
+
+
+			excludeIcd9Codes=["995.90"];
 
 
 			var  inputFeatures=inputData.inputfeatures;
@@ -503,6 +972,14 @@ module.exports = {
 			var minDiagnosisTime=4;
 
 			var minReading=8;
+
+			var vassopressors=1;
+
+			var settings = {
+				vassopressors:1,
+				sofa:1
+				};
+
 
 			var trainingDatafileName="trainingData_"+Math.floor(Date.now() / 1000)+".csv";
 			var validationDatafileName="validationData_"+Math.floor(Date.now() / 1000)+".csv";
@@ -600,143 +1077,155 @@ module.exports = {
     							return callback(err);
     						}
 
+    						// //Get vassopressors data
+    						return module.exports.getMergeAdditionalData(patientId, settings, dataVitalSignLab, function(err,dataVitalSignLabAddtion){
     						// get data from the diagnosis Table;
-    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
+	    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLabAddtion,icd9Codes,function(err,dataVitalSignLabDiagnosis){
 
-    							if(err){
-    									return callback(err);
-    								}
+	    							if(err){
+	    									return callback(err);
+	    								}
 
-    							// Add history and Predictions to the data;
+	    							// Add history and Predictions to the data;
 
-    							return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
-    								if(err){
-    									return callback(err);
-    								}
-
-
-    								//Get proper Headers as per the input
-
-    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
-    									if(err){
-    										return callback(err);
-    									}
-
-    									//Remove Rows with any null outputs and all null input
-    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
-    										
-    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
-    											return callback();
-    										}
-
-    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
-    											var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
-    											var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
-    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
-    											if(diagnosis==1){
-    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
-    													return callback();
-    												}
-    											}
-    										}
-
-    										var outputData=[];
-    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
-    											temp={};
-    											headers.forEach(function(header){
-    												if(headermap[header]){
-    													temp[headermap[header]]=eachRow[header];
-    												}else{
-    													temp[header]=eachRow[header];
-    												}
-    											});
-    											outputData.push(temp);
-    										});
+	    							return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+	    								if(err){
+	    									return callback(err);
+	    								}
 
 
+	    								//Get proper Headers as per the input
 
-    										var newHeaders=[];
-    										headers.forEach(function(header){
-    											if(headermap[header]){
-    												newHeaders.push(headermap[header]);
-    											}else{
-    												newHeaders.push(header);
-    											}
-    										});
+	    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+	    									if(err){
+	    										return callback(err);
+	    									}
+
+	    									//Remove Rows with any null outputs and all null input
+	    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
+	    										
+	    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+	    											return callback();
+	    										}
+
+	    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+	    											var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+	    											var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+	    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+	    											if(diagnosis==1){
+	    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
+	    													return callback();
+	    												}
+	    											}
+	    										}
+
+	    										var outputData=[];
+	    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+	    											temp={};
+	    											headers.forEach(function(header){
+	    												if(headermap[header]){
+	    													temp[headermap[header]]=eachRow[header];
+	    												}else{
+	    													temp[header]=eachRow[header];
+	    												}
+	    											});
+	    											outputData.push(eachRow);
+	    										});
 
 
 
+	    										var newHeaders=[];
+	    										headers.forEach(function(header){
+	    											if(headermap[header]){
+	    												newHeaders.push(headermap[header]);
+	    											}else{
+	    												newHeaders.push(header);
+	    											}
+	    										});
 
 
-											var fileName='';
-											if(patientIdDic[patientId].file=='train'){
-												fileName=trainingDatafileName;
-												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
-    												patientTrainingWithDiagnosis = patientTrainingWithDiagnosis+1;
+
+
+
+
+
+												var fileName='';
+												if(patientIdDic[patientId].file=='train'){
+													fileName=trainingDatafileName;
+													if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+	    												patientTrainingWithDiagnosis = patientTrainingWithDiagnosis+1;
+													}else{
+														patientTrainingWithoutDiagnosis = patientTrainingWithoutDiagnosis+1;
+													}
 												}else{
-													patientTrainingWithoutDiagnosis = patientTrainingWithoutDiagnosis+1;
+													fileName=validationDatafileName;
+													if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+	    												validationTrainingWithDiagnosis = validationTrainingWithDiagnosis+1
+													}else{
+														validationTrainingWithoutDiagnosis = validationTrainingWithoutDiagnosis+1;
+													}
+
 												}
-											}else{
-												fileName=validationDatafileName;
-												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
-    												validationTrainingWithDiagnosis = validationTrainingWithDiagnosis+1
-												}else{
-													validationTrainingWithoutDiagnosis = validationTrainingWithoutDiagnosis+1;
+												
+												if(outputData.length==0){
+													return callback();
 												}
 
-											}
-											console.log(outputData.length);
-											if(outputData.length==0){
-												return callback();
-											}
-
-				    						if(wflagt==0 && fileName==trainingDatafileName){
-				    							wflagt=1;
-				    						var csv = json2csv({ data: outputData, fields: newHeaders});
-
-				    						
-											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) return callback(err);
-				  									//console.log('file saved');
-				    								return callback();
-											});
-				    							
-				    						}
-
-				    						if(wflagv==0 && fileName==validationDatafileName){
-				    							wflagv=1;
-				    						var csv = json2csv({ data: outputData, fields: newHeaders});
-				 							
-											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) {
-				  								return callback(err);	
-				  								}
-				  							//console.log('file saved');
-				    							return callback();
-											});
-				    							
-				    						}
+												
 
 
+												newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","age","lengthofStay","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
+												// newHeaders=Object.keys(outputData[0]);
+												// console.log(newHeaders);
 
-				    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
-				 							csv="\n"+csv;
-											return fs.appendFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) return callback(err);
-				  							//console.log('file saved');
-				    						return callback();
-	    									
+					    						if(wflagt==0 && fileName==trainingDatafileName){
+					    							wflagt=1;
+					    						var csv = json2csv({ data: outputData, fields: newHeaders});
+
+					    						
+												return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) return callback(err);
+					  									//console.log('file saved');
+					    								return callback();
+												});
+					    							
+					    						}
+
+					    						if(wflagv==0 && fileName==validationDatafileName){
+					    							wflagv=1;
+					    						var csv = json2csv({ data: outputData, fields: newHeaders});
+					 							
+												return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) {
+					  								return callback(err);	
+					  								}
+					  							//console.log('file saved');
+					    							return callback();
+												});
+					    							
+					    						}
+
+
+
+					    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
+					 							csv="\n"+csv;
+												return fs.appendFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) return callback(err);
+					  							//console.log('file saved');
+					    						return callback();
+		    									
+		    									});
+	    										
 	    									});
-    										
-    									});
+	    							});
+	    									
 
+									});
+	    						});	
 
-
-    							});
-    									
-
-								});
     						});
+
+    						
 
     					})
     					

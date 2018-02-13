@@ -31,6 +31,69 @@ module.exports = {
 		}
 
 	},
+	getVassoInfusionData:function(patientId,callback){
+		try{
+			
+			var queryParams=[patientId];
+
+			var query="select  *  from eicu.infusionDrug where patientunitstayid= $1";
+			
+			const client= new Client(database['eicu']); 
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 	return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+	},
+	getwt:function(patientId , callback){
+		try{
+			
+			var queryParams=[patientId];
+
+			var query="select  admissionWeight from eicu.patient where patientunitstayid= $1";
+			
+			const client= new Client(database['eicu']); 
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 	return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
 	getPatientData: function(patientId , callback){
 		try{
 			
@@ -133,7 +196,7 @@ module.exports = {
 
 
 
-			var query="select labResultOffset, labName, labResult from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") order by labResultOffset;";
+			var query="select labResultOffset, labName, labResult from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") and  labresult is not null order by labResultOffset;";
 
 
 			
@@ -225,6 +288,7 @@ module.exports = {
 
 			
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code not in ("+ params.join(',')+");";
+			var query="select distinct(patientunitstayid) from eicu.diagnosis where  patientunitstayid not in (select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+"))";
 			
 
 			const client= new Client(database['eicu']); 

@@ -298,6 +298,7 @@ module.exports = {
 						}
 					}
 					dataVitalSignLab.forEach(function(eachVitalSign,index){
+						dataVitalSignLab[index]['sex']=sex;
 						dataVitalSignLab[index]['age']=age;
 						dataVitalSignLab[index]['lengthofStay']=lengthofStay;
 						dataVitalSignLab[index]['died']=died;

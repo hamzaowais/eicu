@@ -99,7 +99,7 @@ module.exports = {
 			
 			var queryParams=[patientId];
 
-			var query="select gender, age, unitdischargeoffset, hospitaldischargestatus from eicu.patient where patientunitstayid= $1";
+			var query="select gender, age, unitdischargeoffset, hospitaldischargestatus, patientHealthSystemStayID, hospitalDischargeOffset, hospitalAdmitOffset from eicu.patient where patientunitstayid= $1";
 			
 			const client= new Client(database['eicu']); 
 

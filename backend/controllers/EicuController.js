@@ -252,14 +252,20 @@ module.exports = {
 				dataVitalSignLab[index]['diagnosis']=diagnosis;
 				dataVitalSignLab[index]['diagnosisstring']=-1;
 				dataVitalSignLab[index]['icd9code']=-1;
+				dataVitalSignLab[index]['icd9codeSepsis']=-1;
+				dataVitalSignLab[index]['icd9codeSepsticShock']=-1;
+				dataVitalSignLab[index]['icd9code']=-1;
 				dataVitalSignLab[index]['firstdiagnosis']=-1;
+				dataVitalSignLab[index]['firstSepsisDiagnosis']=-1;
+				dataVitalSignLab[index]['firstSepticShockDiagnosis']=-1;
 			});
 
 			var firstdiagnosis=1000000000000000000;
-
+			var firstSepsisDiagnosis=1000000000000000000;
+			var firstSepticShockDiagnosis=1000000000000000000;
+			//'785.52, R65.21',na=False) | icd9codes.str.match('038.9, 785.52, R65.21',na=False) | icd9codes.str.match('785.52, 785.52, R65.21',na=False)
+			// ('995.92, R65.20', na=False) | icd9codes.str.match('785.59, 038.9, 995.92', na=False) | icd9codes.str.match('785.59, 038.9, 995.92, R65.21', na=False) | icd9codes.str.match('995.91, R65', na=False)
 			diagnosisData.forEach(function(eachdiagnosis){
-
-				
 
 				var time=eachdiagnosis.diagnosisoffset;
 				var diagnosisstring=eachdiagnosis.diagnosisstring;
@@ -267,12 +273,26 @@ module.exports = {
 
 				firstdiagnosis=Math.min(firstdiagnosis,time);
 
+				if(icd9code== '785.52, R65.21' || icd9code== '038.9, 785.52, R65.21' || icd9code== '785.52, 785.52, R65.21' ){
+					firstSepticShockDiagnosis=Math.min(firstSepticShockDiagnosis,time);	
+				}
+				if(icd9code== '785.59, 038.9, 995.92' || icd9code== '785.59, 038.9, 995.92, R65.21' || icd9code=='995.91, R65'|| icd9code=='995.92, R65.2'|| icd9code=='995.92, R65.20'){
+					firstSepsisDiagnosis=Math.min(firstSepsisDiagnosis,time);
+				}
+
 				
 				var ind= Math.round((time-minTime)/60);
 
 				if(ind>=0 && ind < dataVitalSignLabLength){	
 					dataVitalSignLab[ind]['diagnosisstring']=diagnosisstring;
 					dataVitalSignLab[ind]['icd9code']=icd9code;
+
+					if(icd9code== '785.52, R65.21' || icd9code== '038.9, 785.52, R65.21' || icd9code== '785.52, 785.52, R65.21' ){
+						dataVitalSignLab[ind]['icd9codeSepsticShock']=icd9code;
+					}
+					if(icd9code== '785.59, 038.9, 995.92' || icd9code== '785.59, 038.9, 995.92, R65.21' || icd9code=='995.91, R65'|| icd9code=='995.92, R65.2'|| icd9code=='995.92, R65.20'){
+						dataVitalSignLab[ind]['icd9codeSepsis']=icd9code;
+					}
 
 				}
 			});
@@ -282,14 +302,28 @@ module.exports = {
 				if(firstdiagnosis!=1000000000000000000){
 					dataVitalSignLab[index]['firstdiagnosis']=firstdiagnosis;
 				}
+				if(firstSepticShockDiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstSepticShockDiagnosis']=firstSepticShockDiagnosis;
+				}
+				if(firstSepsisDiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstSepsisDiagnosis']=firstSepsisDiagnosis;
+				}
 			});
 			
 			return EicuModel.getPatientData(patientId ,function(err,patientData){
 					var sex=-1;
 					var age = -1;
-					var lengthofStay=-1;
+					var lengthofStay_icu=-1;
+					var lengthofStay_hospital=-1;
 					var died=-1;
 					var dischargeTime=-1;
+					var patientHealthSystemStayID=-1;
+					var hospitaldischargeoffset=-1;
+					var hospitaladmitoffset=-1; 
+
+
+					//patientHealthSystemStayID, hospitaldischargeoffset, hospitaladmitoffset
+
 
 					if(patientData.length>0){
 						if(patientData[0].gender=='Male'){
@@ -297,23 +331,38 @@ module.exports = {
 						}else{
 							sex=0;
 						}
+
+
 						age=patientData[0].age;
 						dischargeTime=patientData[0].unitdischargeoffset;
+						hospitaladmitoffset=patientData[0].hospitaladmitoffset;
+						hospitaldischargeoffset=patientData[0].hospitaldischargeoffset;
+						patientHealthSystemStayID=patientData[0].patientHealthSystemStayID;
+
+				
+
+
+						
+						lengthofStay_hospital=(hospitaldischargeoffset-hospitaladmitoffset)/60;
+
 						if(patientData[0].hospitaldischargestatus=='Alive'){
 							died=0;
 						}else if(patientData[0].hospitaldischargestatus=='Expired'){
 							died=1;
 						}
 
-						if(patientData[0].unitdischargeoffset>0){
-							lengthofStay=patientData[0].unitdischargeoffset/60;
-						}
+						
+						lengthofStay_icu=patientData[0].unitdischargeoffset/60;
+						
 
 						
 					}
 					dataVitalSignLab.forEach(function(eachVitalSign,index){
 						dataVitalSignLab[index]['age']=age;
-						dataVitalSignLab[index]['lengthofStay']=lengthofStay;
+						dataVitalSignLab[index]['lengthofStay_icu']=lengthofStay_icu;
+						dataVitalSignLab[index]['patientHealthSystemStayID']=patientHealthSystemStayID;
+						dataVitalSignLab[index]['lengthofStay_hospital']=lengthofStay_hospital;
+
 						dataVitalSignLab[index]['died']=died;
 						dataVitalSignLab[index]['dischargeTime']=dischargeTime;
 						dataVitalSignLab[index]['sex']=sex;
@@ -955,7 +1004,7 @@ module.exports = {
 			//excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
 
 
-			excludeIcd9Codes=["995.90"];
+			// excludeIcd9Codes=["995.90"];
 
 
 			var  inputFeatures=inputData.inputfeatures;
@@ -1114,7 +1163,7 @@ module.exports = {
 	    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
 	    											if(diagnosis==1){
 	    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
-	    													return callback();
+	    													//return callback();
 	    												}
 	    											}
 	    										}
@@ -1174,9 +1223,13 @@ module.exports = {
 												
 
 
-												newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","age","lengthofStay","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
+												//newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
 												// newHeaders=Object.keys(outputData[0]);
+												
 												// console.log(newHeaders);
+
+												newHeaders=["patientunitstayid", "patientHealthSystemStayID", "diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay_icu","lengthofStay_hospital","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3"];
+												
 
 					    						if(wflagt==0 && fileName==trainingDatafileName){
 					    							wflagt=1;

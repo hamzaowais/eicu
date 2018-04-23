@@ -75,14 +75,28 @@ module.exports = {
 			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
 
 				
-				minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
+				// minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
 
 
-				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
-				var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
+				// var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
+				// var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
 
-				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
-				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
+				// var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
+				// var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
+
+
+
+				//minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
+
+
+				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(resultsPatientIdsObjwithDiagnosis.length/2));
+				var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(resultsPatientIdsObjwithDiagnosis.length/2)+1, resultsPatientIdsObjwithDiagnosis.length);
+
+				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(resultsPatientIdsObjwithoutDiagnosis.length)/2);
+				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(resultsPatientIdsObjwithoutDiagnosis.length)/2+1, resultsPatientIdsObjwithoutDiagnosis.length);
+
+
+
 
 				var patientIds=[];
 				var patientIdDic={};
@@ -90,7 +104,7 @@ module.exports = {
 
 				var maxSoFar=Math.max(trainWithDiagnosis.length,validationWithDiagnosis.length, trainWithoutDiagnosis.length,validationWithoutDiagnosis.length);
 
-				console.log(maxSoFar);
+				
 
 				trainWithDiagnosisLength=trainWithDiagnosis.length;
 				trainWithoutDiagnosisLength=trainWithoutDiagnosis.length;

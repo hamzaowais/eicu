@@ -31,7 +31,6 @@ module.exports = {
 		}
 
 	},
-
 	getLiverData:function(request,response){
 		try{
 

@@ -1097,6 +1097,8 @@ module.exports = {
 													"doa":"01/01/1970"
 												};
 
+												var logs=[];
+
 
 												//get patient data=
 												var firstData=trimmedDataVitalSignLabDiagnosisPredictHist[0];
@@ -1107,7 +1109,7 @@ module.exports = {
 												}
 
 												if(firstData.age){
-													patientData.age=age;
+													patientData.age=firstData.age;
 												}else{
 													patientData.age=-1
 												}
@@ -1120,22 +1122,27 @@ module.exports = {
 
 													tempWithoutNull["time"]=eachRow["time"];
 													headers.forEach(function(header){
+														var tempKey='';
 														if(headermap[header]){
 															temp[headermap[header]]=eachRow[header];
+															tempKey=headermap[header];
 														}else{
 															temp[header]=eachRow[header];
+															tempKey=header;
 														}
 
-														if(eachRow[header])
-														if(headermap[header]){
-															temp[headermap[header]]=eachRow[header];
-														}else{
-															temp[header]=eachRow[header];
+														if(eachRow[header]!=-1){
+															tempWithoutNull[tempKey]=temp[tempKey];
+															if(["CaseId","time","diagnosis","firstdiagnosis","diagnosisstring","icd9code","sex","age","died","dischargeTime","lengthofStay"].indexOf(tempKey)==-1){
+																var timestamp=temp["time"]*60*1000;
+																var timeData=new Date(timestamp);
+																logs.push(timeData.toString()+' - ' + tempKey + ' - ' + temp[tempKey]);
+															}
 														}
 
 													});
 
-													vital["time"]=temp[time];
+													vital["time"]=temp["time"];
 
 													["Temp","Systolic_BP","Pulse","MAP","Resp","sao2","systemicdiastolic","systemicmean"].forEach(function(eachHeader){
 														if(temp[eachHeader]!=-1){
@@ -1145,8 +1152,21 @@ module.exports = {
 
 													vitalSignData.push(vital);
 													outputData.push(temp);
+													outputDataWithoutNull.push(tempWithoutNull);
 												});
-												return callback(null,outputData);
+
+												output={
+													vitalSignData:vitalSignData,
+													outputData:outputData,
+													outputDataWithoutNull:outputDataWithoutNull,
+													patientData:patientData,
+													logs:logs
+												};
+												
+												
+
+
+												return callback(null,output);
 											});
 										});
 									});

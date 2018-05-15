@@ -987,6 +987,131 @@ module.exports = {
 			return callback(null, decomposedVitalSignReading);
 		});
 	},
+
+	getLiverData:function(inputData,callback){
+		var patientId=inputData.patientunitstayid;
+
+		var  inputFeatures={"albumin":{"history":0,"dbsource":"lab"},"PT":{"history":0,"dbsource":"lab"},"ALT (SGPT)":{"history":0,"dbsource":"lab"},"PT - INR":{"history":0,"dbsource":"lab"},"PTT":{"history":0,"dbsource":"lab"},"total bilirubin":{"history":0,"dbsource":"lab"},"direct bilirubin":{"history":0,"dbsource":"lab"},"AST (SGOT)":{"history":0,"dbsource":"lab"},"creatinine":{"history":0,"dbsource":"lab"},"sodium":{"history":0,"dbsource":"lab"},"BUN":{"history":0,"dbsource":"lab"},"platelets x 1000":{"history":0,"dbsource":"lab"},"map":{"history":0,"dbsource":"vitalPeriodic"},"respiration":{"history":0,"dbsource":"vitalPeriodic"},"heartrate":{"history":0,"dbsource":"vitalPeriodic"},"temperature":{"history":0,"dbsource":"vitalPeriodic"},"systemicsystolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicdiastolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicmean":{"history":0,"dbsource":"vitalPeriodic"},"sao2":{"history":0,"dbsource":"vitalPeriodic"},"alkaline phos.":{"history":0,"dbsource":"lab"},"total protein":{"history":0,"dbsource":"lab"},"pH":{"history":0,"dbsource":"lab"},"lactate":{"history":0,"dbsource":"lab"}};
+
+		var icd9Codes=["038.9, 570, R65.20, K72.0","570, K72.0","570, K72.9","571.2, K70.3","571.6, K74.5","571.5, K74.60","571.5, K74.69","571.1, K70.1","572.2, K72.91","572.0, K75.0","572.4, K76.7","572.2","E980.0, 573.3","070.51, 573.1, B19.10","573.4, K76.3","573.1, 070.1, B15.9","573.9, K76.9","070.1, 573.1, B15.9","070.30, 573.1, B19.10","573.1, B17.9","573.1, 078.5, B25.1","573.1, 070.30, B17.1","075, 573.1, B27.09","573.1, 070.51, B17.1","573.3, T71.2"];
+
+		var headermap={'patientunitstayid':'CaseId','observationtime24':'24hTimestamp','temperature':'Temp','heartrate':'Pulse','respiration':'Resp','glasgow_coma_score':'Score_(Glasgow_Coma_Scale)','bedside glucose':'Blood_Glucose','WBC x 1000':'WBC_(WHITE_BLOOD_COUNT)','systemicsystolic':'Systolic_BP','map':'MAP','creatinine':'CREATININE_SERUM','PT - INR':'INR','PTT':'PTT','platelets x 1000':'PLATELET_COUNT','total bilirubin':'BILIRUBIN__TOTAL','lactate':'LACTATE__WHOLE_BLOOD','heartrate_hist_1':'HR_Hist{1}','heartrate_hist_2':'HR_Hist{2}','heartrate_hist_3':'HR_Hist{3}','systemicsystolic_hist_1':'SBP_Hist{1}','systemicsystolic_hist_2':'SBP_Hist{2}','systemicsystolic_hist_3':'SBP_Hist{3}','map_hist_1':'MAP_Hist{1}','map_hist_2':'MAP_Hist{2}','map_hist_3':'MAP_Hist{3}','heartrate_fut_1':'HR_Predict{1}','heartrate_fut_2':'HR_Predict{2}','heartrate_fut_3':'HR_Predict{3}','systemicsystolic_fut_1':'SBP_Predict{1}','systemicsystolic_fut_2':'SBP_Predict{2}','systemicsystolic_fut_3':'SBP_Predict{3}','map_fut_1':'MAP_Predict{1}','map_fut_2':'MAP_Predict{2}','map_fut_3':'MAP_Predict{3}'};
+
+
+		var outputFeatures={};
+
+		var labRepeat=0;
+
+		var labItems= [];
+
+		var vitalReadings=[];
+
+		var minDiagnosisTime=4;
+
+		var minReading=8;
+
+		Object.keys(inputFeatures).forEach(function(label){
+			if(inputFeatures[label].dbsource==="lab"){
+				labItems.push(label);
+			}
+			if(inputFeatures[label].dbsource==="vitalPeriodic"){
+				vitalReadings.push(label);
+			}
+		});
+
+		Object.keys(outputFeatures).forEach(function(label){
+			if(outputFeatures[label].dbsource==="lab"){
+				labItems.push(label);
+			}
+			if(outputFeatures[label].dbsource==="vitalPeriodic"){
+				vitalReadings.push(label);
+			}
+		});
+
+		return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
+			if(err){
+				return callback(err);
+			}
+						if(dataVitalSign.length<=0){
+							return callback();
+						}
+
+						//Get Data from the lab table
+						return module.exports.getMergeLabData(patientId, dataVitalSign, labItems, labRepeat,function(err,dataVitalSignLab){
+							if(err){
+								return callback(err);
+							}
+
+							// get data from the diagnosis Table;
+							return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
+
+								if(err){
+										return callback(err);
+									}
+
+								// Add history and Predictions to the data;
+								return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+									if(err){
+										return callback(err);
+									}
+
+									//Get proper Headers as per the input
+									return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+										if(err){
+											return callback(err);
+										}
+
+										//Remove Rows with any null outputs and all null input
+										return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
+											
+											if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+												//todo
+												//return callback();
+												//return callback(new Error(''));
+											}
+
+											if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+												var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+												var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+												var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+												if(diagnosis==1){
+													if(initialDiagnosis<minDiagnosisTime*60+startTime){
+														//todo
+														//return callback();
+													}
+												}
+											}
+
+											var outputData=[];
+											trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+												temp={};
+												headers.forEach(function(header){
+													if(headermap[header]){
+														temp[headermap[header]]=eachRow[header];
+													}else{
+														temp[header]=eachRow[header];
+													}
+												});
+												outputData.push(temp);
+											});
+
+											return callback(null,outputData);
+
+											var newHeaders=[];
+											headers.forEach(function(header){
+												if(headermap[header]){
+													newHeaders.push(headermap[header]);
+												}else{
+													newHeaders.push(header);
+												}
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+	},
 	generateReport: function(inputData,callback){
 		try{
 

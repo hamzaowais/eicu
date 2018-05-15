@@ -989,6 +989,10 @@ module.exports = {
 	},
 
 	getLiverData:function(inputData,callback){
+		var settings = {
+				vassopressors:1,
+				sofa:1
+				};
 		var patientId=inputData.patientunitstayid;
 
 		var  inputFeatures={"albumin":{"history":0,"dbsource":"lab"},"PT":{"history":0,"dbsource":"lab"},"ALT (SGPT)":{"history":0,"dbsource":"lab"},"PT - INR":{"history":0,"dbsource":"lab"},"PTT":{"history":0,"dbsource":"lab"},"total bilirubin":{"history":0,"dbsource":"lab"},"direct bilirubin":{"history":0,"dbsource":"lab"},"AST (SGOT)":{"history":0,"dbsource":"lab"},"creatinine":{"history":0,"dbsource":"lab"},"sodium":{"history":0,"dbsource":"lab"},"BUN":{"history":0,"dbsource":"lab"},"platelets x 1000":{"history":0,"dbsource":"lab"},"map":{"history":0,"dbsource":"vitalPeriodic"},"respiration":{"history":0,"dbsource":"vitalPeriodic"},"heartrate":{"history":0,"dbsource":"vitalPeriodic"},"temperature":{"history":0,"dbsource":"vitalPeriodic"},"systemicsystolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicdiastolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicmean":{"history":0,"dbsource":"vitalPeriodic"},"sao2":{"history":0,"dbsource":"vitalPeriodic"},"alkaline phos.":{"history":0,"dbsource":"lab"},"total protein":{"history":0,"dbsource":"lab"},"pH":{"history":0,"dbsource":"lab"},"lactate":{"history":0,"dbsource":"lab"}};
@@ -1031,9 +1035,11 @@ module.exports = {
 		return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
 			if(err){
 				return callback(err);
-			}
+			}			
 						if(dataVitalSign.length<=0){
-							return callback();
+							//var error = ;
+							//console.log(error);
+							return callback(new Error('No Vital Data found'));
 						}
 
 						//Get Data from the lab table
@@ -1041,69 +1047,106 @@ module.exports = {
 							if(err){
 								return callback(err);
 							}
-
+							return module.exports.getMergeAdditionalData(patientId, settings, dataVitalSignLab, function(err,dataVitalSignLabAddtion){	
 							// get data from the diagnosis Table;
-							return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
-
-								if(err){
-										return callback(err);
-									}
-
-								// Add history and Predictions to the data;
-								return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+								return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLabAddtion,icd9Codes,function(err,dataVitalSignLabDiagnosis){
 									if(err){
-										return callback(err);
-									}
-
-									//Get proper Headers as per the input
-									return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+											return callback(err);
+										}
+									// Add history and Predictions to the data;
+									return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
 										if(err){
 											return callback(err);
 										}
-
-										//Remove Rows with any null outputs and all null input
-										return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
-											
-											if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
-												//todo
-												//return callback();
-												//return callback(new Error(''));
+										//Get proper Headers as per the input
+										return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+											if(err){
+												return callback(err);
 											}
-
-											if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
-												var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
-												var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
-												var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
-												if(diagnosis==1){
-													if(initialDiagnosis<minDiagnosisTime*60+startTime){
-														//todo
-														//return callback();
+											//Remove Rows with any null outputs and all null input
+											return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){	
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length==0){
+													return callback(new Error('No  Data found'));
+												}
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+													//todo
+													//return callback();
+													//return callback(new Error(''));
+												}
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+													var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+													var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+													var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+													if(diagnosis==1){
+														if(initialDiagnosis<minDiagnosisTime*60+startTime){
+															//todo
+															//return callback();
+														}
 													}
 												}
-											}
 
-											var outputData=[];
-											trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
-												temp={};
-												headers.forEach(function(header){
-													if(headermap[header]){
-														temp[headermap[header]]=eachRow[header];
-													}else{
-														temp[header]=eachRow[header];
-													}
-												});
-												outputData.push(temp);
-											});
 
-											return callback(null,outputData);
+												var output={};
+												
+												var vitalSignData=[];
+												var outputData=[];
+												var outputDataWithoutNull=[];
+												var patientData={
+													patientId:patientId,
+													name:"John Doe",
+													"doa":"01/01/1970"
+												};
 
-											var newHeaders=[];
-											headers.forEach(function(header){
-												if(headermap[header]){
-													newHeaders.push(headermap[header]);
+
+												//get patient data=
+												var firstData=trimmedDataVitalSignLabDiagnosisPredictHist[0];
+												if(firstData.sex && firstData.sex==1){
+													patientData.sex='Male'
 												}else{
-													newHeaders.push(header);
+													patientData.sex='Female'
 												}
+
+												if(firstData.age){
+													patientData.age=age;
+												}else{
+													patientData.age=-1
+												}
+
+												 
+												trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+													var temp={};
+													var vital={};
+													var tempWithoutNull={};
+
+													tempWithoutNull["time"]=eachRow["time"];
+													headers.forEach(function(header){
+														if(headermap[header]){
+															temp[headermap[header]]=eachRow[header];
+														}else{
+															temp[header]=eachRow[header];
+														}
+
+														if(eachRow[header])
+														if(headermap[header]){
+															temp[headermap[header]]=eachRow[header];
+														}else{
+															temp[header]=eachRow[header];
+														}
+
+													});
+
+													vital["time"]=temp[time];
+
+													["Temp","Systolic_BP","Pulse","MAP","Resp","sao2","systemicdiastolic","systemicmean"].forEach(function(eachHeader){
+														if(temp[eachHeader]!=-1){
+															vital[eachHeader]=temp[eachHeader];
+														}
+													});
+
+													vitalSignData.push(vital);
+													outputData.push(temp);
+												});
+												return callback(null,outputData);
 											});
 										});
 									});

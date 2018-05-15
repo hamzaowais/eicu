@@ -32,9 +32,54 @@ module.exports = {
 
 	},
 
-	generateReport: function(request,response){
+	getLiverData:function(request,response){
 		try{
 
+			if(request&&request.query){
+				console.log(request.query);
+				['patientunitstayid'].forEach(function(str){
+					if (!request.query[str]){
+						var err = new Error(str+' is not present in the URL');
+						throw err;
+					}
+				});
+				request.input={};
+				['patientunitstayid'].forEach(function(str){
+					request.input[str]=request.query[str];
+				});
+				return EicuController.getLiverData(request.input, function(err, data) {
+		 				if(err){
+		 					request.output={}
+							request.output.error=true;
+							request.output.message=err.message;
+							request.output.data=[];
+							return response.json(request.output);
+		 				}
+		 				var output={};
+		 				output.error=false;
+		 				output.message='No Error Found';
+		 				output.data=data;
+		 				return response.json(output);
+ 				});
+			}
+			else{
+				console.log(request.query);
+				var err =  Error(' Query is not present in the URL');
+				throw err;
+			}
+			
+		}
+		catch(e){
+			request.output={}
+			request.output.error=true;
+			request.output.message=e.message;
+			request.output.data=[];
+			response.json(request.output);
+		}
+	},
+
+	generateReport: function(request,response){
+		try{
 			if(request&&request.body){
 				
 				['icd9codes','inputfeatures','targetfeatures'].forEach(function(str){

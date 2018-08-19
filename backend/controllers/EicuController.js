@@ -827,11 +827,13 @@ module.exports = {
 		if(settings && settings.sofa){
 			sofa=1;
 		}
-
+		var start = Date.now();
 		return module.exports.getVasData(patientId,vassopressor,data,function(err, vassodata){
 			if(err){
 				return callback(err);
 			}
+			console.log("extract Vasso Data");
+			console.log(start-Date.now());
 			return module.exports.getsofaData(sofa, vassodata, function(err,vassosofadata){
 				if(err){
 					return callback(err);
@@ -1251,7 +1253,7 @@ module.exports = {
 			var validationTrainingWithDiagnosis = 0;
 			var validationTrainingWithoutDiagnosis = 0;
 
-
+			
 
 
 			Object.keys(inputFeatures).forEach(function(label){
@@ -1280,7 +1282,7 @@ module.exports = {
 			//Get all the patients with the icd9codes.
 			return module.exports.getPatients(icd9Codes, excludeIcd9Codes,function(err, patientIds, patientIdDic){
 				
-				
+			
 
 				var wflagt=0;
 
@@ -1300,14 +1302,21 @@ module.exports = {
 				});
 
 
+				var initialStart = Date.now();
+
+
 
 
 				async.eachSeries(patients, function(currentPatient, callback) {
 					var patientId= currentPatient.patientId;
+					console.log("Total time taken:");
+					console.log(Date.now()-initialStart);
+					initialStart=Date.now();
 					
 
     			// Perform operation on file here.
     				//console.log('Processing PatientID ' + patientId);
+    				console.log(currentPatient.length);
     				console.log('Progeress:'+ ((currentPatient.current/currentPatient.length)*100));
 
     				console.log("Nummber of Patients in the training data set with Diagnosis: ");
@@ -1323,8 +1332,13 @@ module.exports = {
     				console.log("Nummber of Patients in the validation data set without Diagnosis: ");
     				console.log(validationTrainingWithoutDiagnosis);
 
+    				var start = Date.now();
+
     				//Get Vital Sign Data 
     				return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
+    					console.log("Time Taken to extract the vital sign Data:")
+    					var vital = Date.now();
+    					console.log(start-vital);
     					if(err){
     						return callback(err);
     					}
@@ -1335,6 +1349,10 @@ module.exports = {
 
     					//Get Data from the lab table
     					return module.exports.getMergeLabData(patientId, dataVitalSign, labItems, labRepeat,function(err,dataVitalSignLab){
+    					console.log("Time Taken to extract the  lab Data:")
+    					var lab = Date.now();
+    					console.log(vital-lab);
+
     						if(err){
     							return callback(err);
     						}
@@ -1342,8 +1360,13 @@ module.exports = {
     						// //Get vassopressors data
     						return module.exports.getMergeAdditionalData(patientId, settings, dataVitalSignLab, function(err,dataVitalSignLabAddtion){
     						// get data from the diagnosis Table;
+    						console.log("Time Taken to extract the Additional Data:")
+    						var additional= Date.now();
+    						console.log(additional-lab);
 	    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLabAddtion,icd9Codes,function(err,dataVitalSignLabDiagnosis){
-
+	    							console.log("Time Taken to extract the diagnosis Data:")
+    								var diagnosisd= Date.now();
+    								console.log(diagnosisd-additional);
 	    							if(err){
 	    									return callback(err);
 	    								}
@@ -1351,6 +1374,11 @@ module.exports = {
 	    							// Add history and Predictions to the data;
 
 	    							return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+	    								
+	    								console.log("Time Taken to extract the history prediction Data:")
+	    								var histpre= Date.now();
+    									console.log(histpre-diagnosisd);
+
 	    								if(err){
 	    									return callback(err);
 	    								}
@@ -1359,6 +1387,10 @@ module.exports = {
 	    								//Get proper Headers as per the input
 
 	    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+	    								console.log("Time Taken to extract the headers Data:")
+	    								var headersd= Date.now();
+    									console.log(headersd-histpre);
+
 	    									if(err){
 	    										return callback(err);
 	    									}
@@ -1366,6 +1398,10 @@ module.exports = {
 	    									//Remove Rows with any null outputs and all null input
 	    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
 	    										
+	    										console.log("Time Taken to trim null data:")
+	    										var nulldata= Date.now();
+    											console.log(nulldata-headersd);
+
 	    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
 	    											return callback();
 	    										}
@@ -1382,6 +1418,7 @@ module.exports = {
 	    										}
 
 	    										var outputData=[];
+
 	    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
 	    											temp={};
 	    											headers.forEach(function(header){
@@ -1452,6 +1489,9 @@ module.exports = {
 												return fs.writeFile('./dataset/'+fileName, csv, function(err) {
 					  								if (err) return callback(err);
 					  									//console.log('file saved');
+					  									console.log("Time Taken to save Data  data:")
+	    										var save= Date.now();
+    											console.log(save-nulldata);
 					    								return callback();
 												});
 					    							
@@ -1466,6 +1506,10 @@ module.exports = {
 					  								return callback(err);	
 					  								}
 					  							//console.log('file saved');
+					  							console.log("Time Taken to save Data  data:")
+	    										var save= Date.now();
+    											console.log(save-nulldata);
+
 					    							return callback();
 												});
 					    							
@@ -1478,6 +1522,9 @@ module.exports = {
 												return fs.appendFile('./dataset/'+fileName, csv, function(err) {
 					  								if (err) return callback(err);
 					  							//console.log('file saved');
+					  							console.log("Time Taken to save Data  data:")
+	    										var save= Date.now();
+    											console.log(save-nulldata);
 					    						return callback();
 		    									
 		    									});

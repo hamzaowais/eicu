@@ -16,6 +16,7 @@ module.exports = {
 			
 			var itemDetails= [{dbsource:"lab", labell:"haptoglobin", unitl:"mg/dL", countl:"4634"},{dbsource:"lab", labell:"Procainamide", unitl:"mcg/mL", countl:"10"},{dbsource:"lab", labell:"PT", unitl:"sec", countl:"389725"},{dbsource:"lab", labell:"glucose", unitl:"mg/dL", countl:"1319496"},{dbsource:"lab", labell:"Mode", unitl:"-", countl:"609"},{dbsource:"lab", labell:"Vancomycin - random", unitl:"mcg/mL", countl:"21366"},{dbsource:"lab", labell:"Tobramycin - trough", unitl:"mcg/mL", countl:"237"},{dbsource:"lab", labell:"potassium", unitl:"mmol/L", countl:"1493261"},{dbsource:"lab", labell:"Base Deficit", unitl:"mEq/L", countl:"66496"},{dbsource:"lab", labell:"Lithium", unitl:"mmol/L", countl:"1375"},{dbsource:"lab", labell:"Pressure Support", unitl:"cm H2O", countl:"24537"},{dbsource:"lab", labell:"Tobramycin - peak", unitl:"mcg/mL", countl:"129"},{dbsource:"lab", labell:"Pressure Control", unitl:"cm H2O", countl:"2300"},{dbsource:"lab", labell:"prealbumin", unitl:"mg/dL", countl:"20010"},{dbsource:"lab", labell:"LPM O2", unitl:"L/min", countl:"28171"},{dbsource:"lab", labell:"Fe", unitl:"mcg/dL", countl:"19608"},{dbsource:"lab", labell:"paO2", unitl:"mm Hg", countl:"420762"},{dbsource:"lab", labell:"ethanol", unitl:"mg/dL", countl:"12555"},{dbsource:"lab", labell:"ammonia", unitl:"mcg/dL", countl:"28793"},{dbsource:"lab", labell:"Vancomycin - peak", unitl:"mcg/mL", countl:"35"},{dbsource:"lab", labell:"cortisol", unitl:"mcg/dL", countl:"9178"},{dbsource:"lab", labell:"protein C", unitl:"%", countl:"702"},{dbsource:"lab", labell:"WBC's in synovial fluid", unitl:"-", countl:"146"},{dbsource:"lab", labell:"ALT (SGPT)", unitl:"Units/L", countl:"434605"},{dbsource:"lab", labell:"Methemoglobin", unitl:"%", countl:"101924"},{dbsource:"lab", labell:"glucose - CSF", unitl:"mg/dL", countl:"4071"},{dbsource:"lab", labell:"Tobramycin - random", unitl:"mcg/mL", countl:"742"},{dbsource:"lab", labell:"protein S", unitl:"%", countl:"643"},{dbsource:"lab", labell:"ionized calcium", unitl:"mg/dL", countl:"149138"},{dbsource:"lab", labell:"serum ketones", unitl:"-", countl:"855"},{dbsource:"lab", labell:"protein - CSF", unitl:"mg/dL", countl:"4138"},{dbsource:"lab", labell:"WBC's in urine", unitl:"-", countl:"24453"},{dbsource:"lab", labell:"Device", unitl:"-", countl:"2704"},{dbsource:"lab", labell:"transferrin", unitl:"mg/dL", countl:"4959"},{dbsource:"lab", labell:"WBC x 1000", unitl:"K/mcL", countl:"1134952"},{dbsource:"lab", labell:"Digoxin", unitl:"ng/mL", countl:"8884"},{dbsource:"lab", labell:"Base Excess", unitl:"mEq/L", countl:"328813"},{dbsource:"lab", labell:"-eos", unitl:"%", countl:"583568"},{dbsource:"lab", labell:"RPR titer", unitl:"-", countl:"3"},{dbsource:"lab", labell:"Peak Airway/Pressure", unitl:"cm H2O", countl:"8827"},{dbsource:"lab", labell:"urinary specific gravity", unitl:"-", countl:"106853"},{dbsource:"lab", labell:"lactate", unitl:"mmol/L", countl:"205591"},{dbsource:"lab", labell:"Amikacin - trough", unitl:"mcg/mL", countl:"94"},{dbsource:"lab", labell:"FiO2", unitl:"%", countl:"360107"},{dbsource:"lab", labell:"T3RU", unitl:"%", countl:"531"},{dbsource:"lab", labell:"WBC's in body fluid", unitl:"-", countl:"2022"},{dbsource:"lab", labell:"Gentamicin - trough", unitl:"mcg/mL", countl:"754"},{dbsource:"lab", labell:"PEEP", unitl:"cm H2O", countl:"112830"},{dbsource:"lab", labell:"chloride", unitl:"mmol/L", countl:"1283839"},{dbsource:"lab", labell:"Spontaneous Rate", unitl:"/min", countl:"9696"},{dbsource:"lab", labell:"Site", unitl:"-", countl:"272"},{dbsource:"lab", labell:"Carboxyhemoglobin", unitl:"%", countl:"100040"},{dbsource:"lab", labell:"WBC's in pleural fluid", unitl:"-", countl:"456"},{dbsource:"lab", labell:"TV", unitl:"mls", countl:"94246"},{dbsource:"lab", labell:"troponin - T", unitl:"ng/mL", countl:"39864"},{dbsource:"lab", labell:"sodium", unitl:"mmol/L", countl:"1393205"},{dbsource:"lab", labell:"Vent Other", unitl:"-", countl:"1653"},{dbsource:"lab", labell:"RBC", unitl:"M/mcL", countl:"1132361"},{dbsource:"lab", labell:"HSV 1&2 IgG AB titer", unitl:"-", countl:"12"},{dbsource:"lab", labell:"urinary sodium", unitl:"mmol/L", countl:"16800"},{dbsource:"lab", labell:"prolactin", unitl:"ng/mL", countl:"789"},{dbsource:"lab", labell:"Lidocaine", unitl:"mcg/mL", countl:"256"},{dbsource:"lab", labell:"anion gap", unitl:"-", countl:"1024278"},{dbsource:"lab", labell:"Vancomycin - trough", unitl:"mcg/mL", countl:"41257"},{dbsource:"lab", labell:"total cholesterol", unitl:"mg/dL", countl:"34514"},{dbsource:"lab", labell:"O2 Sat (%)", unitl:"%", countl:"340062"},{dbsource:"lab", labell:"fibrinogen", unitl:"mg/dL", countl:"38800"},{dbsource:"lab", labell:"Ferritin", unitl:"ng/mL", countl:"15343"},{dbsource:"lab", labell:"T4", unitl:"mcg/dL", countl:"1844"},{dbsource:"lab", labell:"-monos", unitl:"%", countl:"625898"},{dbsource:"lab", labell:"Tacrolimus-FK506", unitl:"ng/mL", countl:"6587"},{dbsource:"lab", labell:"HSV 1&2 IgG AB", unitl:"-", countl:"43"},{dbsource:"lab", labell:"CPK", unitl:"Units/L", countl:"108117"},{dbsource:"lab", labell:"TSH", unitl:"mcU/ml", countl:"45271"},{dbsource:"lab", labell:"BNP", unitl:"pg/mL", countl:"46406"},{dbsource:"lab", labell:"calcium", unitl:"mg/dL", countl:"1226978"},{dbsource:"lab", labell:"paCO2", unitl:"mm Hg", countl:"416467"},{dbsource:"lab", labell:"Clostridium difficile toxin A+B", unitl:"-", countl:"109"},{dbsource:"lab", labell:"myoglobin", unitl:"ng/mL", countl:"3755"},{dbsource:"lab", labell:"cd 4", unitl:"-", countl:"500"},{dbsource:"lab", labell:"Phenytoin", unitl:"mcg/mL", countl:"6108"},{dbsource:"lab", labell:"triglycerides", unitl:"mg/dL", countl:"53344"},{dbsource:"lab", labell:"lipase", unitl:"Units/L", countl:"43304"},{dbsource:"lab", labell:"pH", unitl:"-", countl:"413071"},{dbsource:"lab", labell:"-lymphs", unitl:"%", countl:"630836"},{dbsource:"lab", labell:"WBC's in cerebrospinal fluid", unitl:"-", countl:"3331"},{dbsource:"lab", labell:"MPV", unitl:"fL", countl:"770659"},{dbsource:"lab", labell:"Total CO2", unitl:"-", countl:"185611"},{dbsource:"lab", labell:"Gentamicin - peak", unitl:"mcg/mL", countl:"405"},{dbsource:"lab", labell:"PT - INR", unitl:"ratio", countl:"402092"},{dbsource:"lab", labell:"CPK-MB INDEX", unitl:"%", countl:"29240"},{dbsource:"lab", labell:"TIBC", unitl:"mcg/dL", countl:"14649"},{dbsource:"lab", labell:"free T4", unitl:"ng/dL", countl:"13520"},{dbsource:"lab", labell:"albumin", unitl:"g/dL", countl:"506025"},{dbsource:"lab", labell:"total bilirubin", unitl:"mg/dL", countl:"427307"},{dbsource:"lab", labell:"urinary osmolality", unitl:"mOsm/L", countl:"9414"},{dbsource:"lab", labell:"urinary creatinine", unitl:"mg/dL", countl:"13282"},{dbsource:"lab", labell:"HIV 1&2 AB", unitl:"-", countl:"7"},{dbsource:"lab", labell:"reticulocyte count", unitl:"%", countl:"6304"},{dbsource:"lab", labell:"Fe/TIBC Ratio", unitl:"%", countl:"11317"},{dbsource:"lab", labell:"MCH", unitl:"pg", countl:"1059865"},{dbsource:"lab", labell:"AST (SGOT)", unitl:"Units/L", countl:"437311"},{dbsource:"lab", labell:"CRP", unitl:"mg/dL", countl:"12932"},{dbsource:"lab", labell:"Amikacin - random", unitl:"mcg/mL", countl:"176"},{dbsource:"lab", labell:"Respiratory Rate", unitl:"/min", countl:"49021"},{dbsource:"lab", labell:"magnesium", unitl:"mg/dL", countl:"648642"},{dbsource:"lab", labell:"T3", unitl:"ng/dL", countl:"1092"},{dbsource:"lab", labell:"bedside glucose", unitl:"mg/dL", countl:"3175835"},{dbsource:"lab", labell:"total protein", unitl:"g/dL", countl:"432993"},{dbsource:"lab", labell:"Vitamin B12", unitl:"pg/mL", countl:"14825"},{dbsource:"lab", labell:"Theophylline", unitl:"mcg/mL", countl:"664"},{dbsource:"lab", labell:"PTT ratio", unitl:"ratio", countl:"11041"},{dbsource:"lab", labell:"LDL", unitl:"mg/dL", countl:"24277"},{dbsource:"lab", labell:"-bands", unitl:"%", countl:"75699"},{dbsource:"lab", labell:"creatinine", unitl:"mg/dL", countl:"1277760"},{dbsource:"lab", labell:"BUN", unitl:"mg/dL", countl:"1270484"},{dbsource:"lab", labell:"alkaline phos.", unitl:"Units/L", countl:"429899"},{dbsource:"lab", labell:"HCO3", unitl:"mmol/L", countl:"390863"},{dbsource:"lab", labell:"24 h urine protein", unitl:"mg/24HR", countl:"2870"},{dbsource:"lab", labell:"RDW", unitl:"%", countl:"1048569"},{dbsource:"lab", labell:"WBC's in pericardial fluid", unitl:"-", countl:"47"},{dbsource:"lab", labell:"phosphate", unitl:"mg/dL", countl:"425439"},{dbsource:"lab", labell:"uric acid", unitl:"mg/dL", countl:"13623"},{dbsource:"lab", labell:"Hct", unitl:"%", countl:"1279704"},{dbsource:"lab", labell:"MCHC", unitl:"g/dL", countl:"1104854"},{dbsource:"lab", labell:"PTT", unitl:"sec", countl:"285251"},{dbsource:"lab", labell:"Oxyhemoglobin", unitl:"%", countl:"35738"},{dbsource:"lab", labell:"salicylate", unitl:"mg/dL", countl:"6333"},{dbsource:"lab", labell:"Temperature", unitl:"&#176;C", countl:"113472"},{dbsource:"lab", labell:"bicarbonate", unitl:"mmol/L", countl:"1199866"},{dbsource:"lab", labell:"Hgb", unitl:"g/dL", countl:"1298708"},{dbsource:"lab", labell:"Acetaminophen", unitl:"mcg/mL", countl:"8512"},{dbsource:"lab", labell:"Vent Rate", unitl:"/min", countl:"55243"},{dbsource:"lab", labell:"-basos", unitl:"%", countl:"558783"},{dbsource:"lab", labell:"ESR", unitl:"mm/hr", countl:"13242"},{dbsource:"lab", labell:"ANF/ANA", unitl:"-", countl:"448"},{dbsource:"lab", labell:"Amikacin - peak", unitl:"mcg/mL", countl:"54"},{dbsource:"lab", labell:"Cyclosporin", unitl:"ng/mL", countl:"599"},{dbsource:"lab", labell:"serum osmolality", unitl:"mOsm/kg H2O", countl:"28521"},{dbsource:"lab", labell:"folate", unitl:"ng/mL", countl:"11550"},{dbsource:"lab", labell:"CRP-hs", unitl:"mg/L", countl:"979"},{dbsource:"lab", labell:"amylase", unitl:"Units/L", countl:"16650"},{dbsource:"lab", labell:"WBC's in peritoneal fluid", unitl:"-", countl:"341"},{dbsource:"lab", labell:"direct bilirubin", unitl:"mg/dL", countl:"77732"},{dbsource:"lab", labell:"Carbamazepine", unitl:"mcg/mL", countl:"740"},{dbsource:"lab", labell:"Gentamicin - random", unitl:"mcg/mL", countl:"783"},{dbsource:"lab", labell:"24 h urine urea nitrogen", unitl:"G/24HR", countl:"275"},{dbsource:"lab", labell:"O2 Content", unitl:"mls/dL", countl:"64619"},{dbsource:"lab", labell:"CPK-MB", unitl:"ng/mL", countl:"66958"},{dbsource:"lab", labell:"platelets x 1000", unitl:"K/mcL", countl:"1149488"},{dbsource:"lab", labell:"-polys", unitl:"%", countl:"559192"},{dbsource:"lab", labell:"Phenobarbital", unitl:"mcg/mL", countl:"654"},{dbsource:"lab", labell:"NAPA", unitl:"mcg/mL", countl:"10"},{dbsource:"lab", labell:"HDL", unitl:"mg/dL", countl:"33835"},{dbsource:"lab", labell:"LDH", unitl:"Units/L", countl:"22035"},{dbsource:"lab", labell:"troponin - I", unitl:"ng/mL", countl:"192317"},{dbsource:"lab", labell:"MCV", unitl:"fL", countl:"1105350"},{dbsource:"lab", labell:"Legionella pneumophila Ab", unitl:"-", countl:"28"},{dbsource:"vitalPeriodic", labell:"temperature", unitl:"decimal(11,4)", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"sao2", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"heartrate", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"respiration", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"cvp", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"etco2", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"systemicsystolic", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"systemicdiastolic", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"systemicmean", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"pasystolic", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"padiastolic", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"pamean", unitl:"int", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"st1", unitl:"real", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"st2", unitl:"real", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"st3", unitl:"real", countl:"notCalculated"},{dbsource:"vitalPeriodic", labell:"icp", unitl:"int", countl:"notCalculated"}, {dbsource:"vitalPeriodic", labell:"map", unitl:"int", countl:"notCalculated"}];
 			var output={};
+
 			EicuModel.getDiagnosis(function(err, resultsIcd){
 				if(err){
 					return callback(err);
@@ -71,9 +72,9 @@ module.exports = {
 
 		return EicuModel.getPatientsIdsWithIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithDiagnosis){
 
-			console.log(resultsPatientIdsObjwithDiagnosis);
+			console.log(resultsPatientIdsObjwithDiagnosis.length);
 			return EicuModel.getPatientsIdsWithoutIcd9(icd9codes,excludeIcd9Codes,function(err, resultsPatientIdsObjwithoutDiagnosis){
-
+				console.log(resultsPatientIdsObjwithoutDiagnosis.length);
 				
 				// minLengthPatientIds=Math.min(resultsPatientIdsObjwithDiagnosis.length, resultsPatientIdsObjwithoutDiagnosis.length);
 
@@ -95,6 +96,19 @@ module.exports = {
 				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(resultsPatientIdsObjwithoutDiagnosis.length)/2);
 				var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(resultsPatientIdsObjwithoutDiagnosis.length)/2+1, resultsPatientIdsObjwithoutDiagnosis.length);
 
+
+				// var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(0, Math.floor(minLengthPatientIds/2));
+				// var validationWithDiagnosis=resultsPatientIdsObjwithDiagnosis.slice(Math.floor(minLengthPatientIds/2)+1, minLengthPatientIds);
+
+				// var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(0, Math.floor(minLengthPatientIds));
+				// var validationWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis.slice(Math.floor(minLengthPatientIds)+1, minLengthPatientIds*2);
+
+
+				var trainWithDiagnosis=resultsPatientIdsObjwithDiagnosis;
+				var validationWithDiagnosis=[];
+
+				var trainWithoutDiagnosis=resultsPatientIdsObjwithoutDiagnosis;
+				var validationWithoutDiagnosis=[];
 
 
 
@@ -131,14 +145,14 @@ module.exports = {
 					if(i<validationWithDiagnosisLength){
 						patientIds.push(validationWithDiagnosis[i].patientunitstayid);
 						patientIdDic[validationWithDiagnosis[i].patientunitstayid]={
-							file:'validation',
+							file:'train',
 							diagnosis:false
 						}
 					}
 					if(i<validationWithoutDiagnosisLength){
 						patientIds.push(validationWithoutDiagnosis[i].patientunitstayid);
 						patientIdDic[validationWithoutDiagnosis[i].patientunitstayid]={
-							file:'validation',
+							file:'train',
 							diagnosis:false
 						}
 					}
@@ -258,14 +272,20 @@ module.exports = {
 				dataVitalSignLab[index]['diagnosis']=diagnosis;
 				dataVitalSignLab[index]['diagnosisstring']=-1;
 				dataVitalSignLab[index]['icd9code']=-1;
+				dataVitalSignLab[index]['icd9codeSepsis']=-1;
+				dataVitalSignLab[index]['icd9codeSepsticShock']=-1;
+				dataVitalSignLab[index]['icd9code']=-1;
 				dataVitalSignLab[index]['firstdiagnosis']=-1;
+				dataVitalSignLab[index]['firstSepsisDiagnosis']=-1;
+				dataVitalSignLab[index]['firstSepticShockDiagnosis']=-1;
 			});
 
 			var firstdiagnosis=1000000000000000000;
-
+			var firstSepsisDiagnosis=1000000000000000000;
+			var firstSepticShockDiagnosis=1000000000000000000;
+			//'785.52, R65.21',na=False) | icd9codes.str.match('038.9, 785.52, R65.21',na=False) | icd9codes.str.match('785.52, 785.52, R65.21',na=False)
+			// ('995.92, R65.20', na=False) | icd9codes.str.match('785.59, 038.9, 995.92', na=False) | icd9codes.str.match('785.59, 038.9, 995.92, R65.21', na=False) | icd9codes.str.match('995.91, R65', na=False)
 			diagnosisData.forEach(function(eachdiagnosis){
-
-				
 
 				var time=eachdiagnosis.diagnosisoffset;
 				var diagnosisstring=eachdiagnosis.diagnosisstring;
@@ -273,12 +293,26 @@ module.exports = {
 
 				firstdiagnosis=Math.min(firstdiagnosis,time);
 
+				if(icd9code== '785.52, R65.21' || icd9code== '038.9, 785.52, R65.21' || icd9code== '785.52, 785.52, R65.21' ){
+					firstSepticShockDiagnosis=Math.min(firstSepticShockDiagnosis,time);	
+				}
+				if(icd9code== '785.59, 038.9, 995.92' || icd9code== '785.59, 038.9, 995.92, R65.21' || icd9code=='995.91, R65'|| icd9code=='995.92, R65.2'|| icd9code=='995.92, R65.20'){
+					firstSepsisDiagnosis=Math.min(firstSepsisDiagnosis,time);
+				}
+
 				
 				var ind= Math.round((time-minTime)/60);
 
 				if(ind>=0 && ind < dataVitalSignLabLength){	
 					dataVitalSignLab[ind]['diagnosisstring']=diagnosisstring;
 					dataVitalSignLab[ind]['icd9code']=icd9code;
+
+					if(icd9code== '785.52, R65.21' || icd9code== '038.9, 785.52, R65.21' || icd9code== '785.52, 785.52, R65.21' ){
+						dataVitalSignLab[ind]['icd9codeSepsticShock']=icd9code;
+					}
+					if(icd9code== '785.59, 038.9, 995.92' || icd9code== '785.59, 038.9, 995.92, R65.21' || icd9code=='995.91, R65'|| icd9code=='995.92, R65.2'|| icd9code=='995.92, R65.20'){
+						dataVitalSignLab[ind]['icd9codeSepsis']=icd9code;
+					}
 
 				}
 			});
@@ -288,14 +322,28 @@ module.exports = {
 				if(firstdiagnosis!=1000000000000000000){
 					dataVitalSignLab[index]['firstdiagnosis']=firstdiagnosis;
 				}
+				if(firstSepticShockDiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstSepticShockDiagnosis']=firstSepticShockDiagnosis;
+				}
+				if(firstSepsisDiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstSepsisDiagnosis']=firstSepsisDiagnosis;
+				}
 			});
 			
 			return EicuModel.getPatientData(patientId ,function(err,patientData){
 					var sex=-1;
 					var age = -1;
-					var lengthofStay=-1;
+					var lengthofStay_icu=-1;
+					var lengthofStay_hospital=-1;
 					var died=-1;
 					var dischargeTime=-1;
+					var patientHealthSystemStayID=-1;
+					var hospitaldischargeoffset=-1;
+					var hospitaladmitoffset=-1; 
+
+
+					//patientHealthSystemStayID, hospitaldischargeoffset, hospitaladmitoffset
+
 
 					if(patientData.length>0){
 						if(patientData[0].gender=='Male'){
@@ -303,25 +351,498 @@ module.exports = {
 						}else{
 							sex=0;
 						}
+
+
 						age=patientData[0].age;
 						dischargeTime=patientData[0].unitdischargeoffset;
+						hospitaladmitoffset=patientData[0].hospitaladmitoffset;
+						hospitaldischargeoffset=patientData[0].hospitaldischargeoffset;
+						patientHealthSystemStayID=patientData[0].patientHealthSystemStayID;
+
+				
+
+
+						
+						lengthofStay_hospital=(hospitaldischargeoffset-hospitaladmitoffset)/60;
+
 						if(patientData[0].hospitaldischargestatus=='Alive'){
 							died=0;
 						}else if(patientData[0].hospitaldischargestatus=='Expired'){
 							died=1;
 						}
+
+						
+						lengthofStay_icu=patientData[0].unitdischargeoffset/60;
+						
+
+						
 					}
 					dataVitalSignLab.forEach(function(eachVitalSign,index){
 						dataVitalSignLab[index]['sex']=sex;
 						dataVitalSignLab[index]['age']=age;
-						dataVitalSignLab[index]['lengthofStay']=lengthofStay;
+						dataVitalSignLab[index]['lengthofStay_icu']=lengthofStay_icu;
+						dataVitalSignLab[index]['patientHealthSystemStayID']=patientHealthSystemStayID;
+						dataVitalSignLab[index]['lengthofStay_hospital']=lengthofStay_hospital;
+
 						dataVitalSignLab[index]['died']=died;
-						dataVitalSignLab[index]['dischargeTime']=dischargeTime
+						dataVitalSignLab[index]['dischargeTime']=dischargeTime;
+						dataVitalSignLab[index]['sex']=sex;
+
 					});
 					return callback(err, dataVitalSignLab);
 			});
 		});
 	}, 
+	getsofaData: function(sofa, vassodata, callback){
+		if(sofa==0){
+			return callback(null, vassodata);
+		}
+		var pao2=-1;
+		var fio2=-1;
+		var pafiFio2ration=-1;
+		var gcs=-1;
+		var map=-1;
+		var dopamine=-1
+		var dobutamine=-1
+		var epinephrine=-1;
+		var norepinephrine=-1;
+		var bilirubin=-1;
+		var platelets=-1;
+		var creatinine=-1;
+		var systolicBP=-1;
+		var isVent=0;
+		var urine=-1;
+		var pulse=-1;
+		var resp=-1;
+		var lastsofa=0;
+		var sepsis3=0;
+		var sepsis3SepticShock=0;
+		var lactate=-1;
+
+
+		vassodata.forEach(function(data){
+			if(data["paO2"]&&data["paO2"]>0){
+				pao2=data["paO2"]
+			}
+			if(data["FiO2"]&&data["FiO2"]>0){
+				fio2=data["FiO2"]
+			}
+			if(data["gcs"]&&data["gcs"]>0){
+				gcs=data["gcs"]
+			}
+			if(data["map"]&&data["map"]>0){
+				map=data["map"]
+			}
+			if(data["rate_dopamine"]&&data["rate_dopamine"]>0){
+				dopamine=data["rate_dopamine"]
+			}
+			if(data["rate_dobutamine"]&&data["rate_dobutamine"]>0){
+				dobutamine=data["rate_dobutamine"]
+			}
+			if(data["rate_epinephrine"]&&data["rate_epinephrine"]>0){
+				epinephrine=data["rate_epinephrine"]
+			}
+			if(data["rate_norepinephrine"]>0){
+				norepinephrine=data["rate_norepinephrine"]
+			}
+			if(data["total bilirubin"]&&data["total bilirubin"]>0){
+				bilirubin=data["total bilirubin"]
+			}
+			if(data["platelets x 1000"]&&data["platelets x 1000"]>0){
+				platelets=data["platelets x 1000"]
+			}
+			if(data["creatinine"]&&data["creatinine"]>0){
+				creatinine=data["creatinine"]
+			}
+			if(data["systemicsystolic"]&&data["systemicsystolic"]>0){
+				systolicBP=data["systemicsystolic"]
+			}
+			if(data["Vent Rate"]&&data["Vent Rate"]>0){
+				isVent=1;
+			}
+			if(data["urine"]&&data["urine"]>0){
+				urine=data["urine"];
+			}
+			if(data["heartrate"]&&data["heartrate"]>0){
+				pulse=data["heartrate"];
+			}
+
+			if(data["respiration"]&&data["respiration"]>0){
+				resp=data["respiration"];
+			}
+
+			if(data["lactate"]&&data["lactate"]>0){
+				lactate=data["lactate"];
+			}
+
+
+			var respiratory=0;
+			var nervous=0;
+			var cardiovascular=0;
+			var liver=0;
+			var coagulation=0;
+			var kidneys=0;
+
+			
+
+			if(pao2>0 && fio2>0){
+
+				pafiFio2ration=(pao2*100)/fio2;
+				
+				if(pafiFio2ration>=400){
+					respiratory=0;
+
+				}
+				if(pafiFio2ration<400){
+					respiratory=1;
+
+				}
+				if(pafiFio2ration<300){
+					respiratory=2;
+				}
+				if(pafiFio2ration<200){
+					respiratory=3;
+				}
+
+				if(pafiFio2ration<100){
+					respiratory=4;
+				}
+			}
+
+			if(gcs>0){
+				if(gcs<6){
+					nervous=4;
+				}
+				else if(gcs>=6 && gcs<10){
+					nervous=3
+				}else if(gcs>=10 && gcs<13){
+					nervous=2
+				}else if(gcs>=13 && gcs<15){
+					nervous=1
+				}else{
+					nervous=0;
+				}
+			}
+			if(map>0){
+				if(map>=70){
+					cardiovascular=0;
+				}else{
+					cardiovascular=1;
+					if(dopamine>0 || dobutamine>0){
+						cardiovascular=2;
+					}
+					if(dopamine>5 || epinephrine>0 || norepinephrine>0){
+						cardiovascular=3;
+					}
+					if(dopamine>15 || epinephrine>0.1 || norepinephrine>0.1){
+						cardiovascular=4;
+					}
+
+				}
+			}
+
+			if(bilirubin>0){
+				if(bilirubin>=1.2){
+		        	liver=1;
+		        }
+		        if(bilirubin>=2.0){
+		        	liver=2;
+		        }
+
+		        if(bilirubin>=6.0){
+		        	liver=3;
+		        }
+		        if(bilirubin>=12.0){
+		        	liver=4;
+		        }	
+			}
+
+
+			if(creatinine>0){
+				
+				if(creatinine>=1.2 && creatinine<2.0){
+					kidneys=1;
+				}
+				if(creatinine>=2.0 && creatinine<3.5){
+					kidneys=2
+				}
+				if(creatinine>=3.5 && creatinine<5 ){
+					kidneys=3
+				}
+				if(creatinine>=5){
+					kidneys=4
+				}
+
+
+				
+
+
+			}	
+
+			// if(urine>0){
+			// 	if(urine<500){
+			// 		kidneys=3;
+			// 	}
+			// 	if(urine<200){
+			// 		kidneys=4;
+			// 	}
+			// }	
+	        
+	        if(platelets>0){
+	        	if(platelets<150){
+	        		coagulation=1
+	        	}
+
+	        	if(platelets<100){
+	        		coagulation=2
+	        	}
+	        	if(platelets<50){
+	        		coagulation=3
+	        	}
+	        	if(platelets<20){
+	        		coagulation=4
+	        	}
+	        }
+
+	        
+	        var sofa=coagulation+kidneys+liver+cardiovascular+nervous+respiratory;
+	        var delSofa=sofa-lastsofa;
+	        var qsofa=0;
+
+	        if(cardiovascular>=2 && lactate>=2){
+	        	sepsis3SepticShock=1;
+	        }
+
+	        lastsofa=sofa;
+
+	        if(delSofa>=2){
+	        	sepsis3=1;
+	        }
+
+	        if(systolicBP<=100 && systolicBP>0){
+	        	qsofa=qsofa+1;
+	        }
+
+	        if(resp>0 && resp>=22){
+	        	qsofa=qsofa+1;
+	        }
+
+	        if(gcs>0 && gcs<15){
+	        	qsofa=qsofa+1;
+	        }
+
+	        data["pao2Fio2ratio"]=pafiFio2ration;
+	        data["cardiovascular"]=cardiovascular;
+	        data["kidneys"]=kidneys;
+	        data["coagulation"]=coagulation;
+	        data["liver"]=liver;
+	        data["respiratory"]=respiratory;
+	        data["nervous"]=nervous;
+	        data["sofa"]=sofa;
+	        data["qsofa"]=qsofa;
+	        data['delSofa']=delSofa;
+	        data['sepsis3']=sepsis3;
+	        data['sepsis3SepticShock']=sepsis3SepticShock;
+	        
+
+		});
+		return callback(null, vassodata);
+
+
+
+	},
+	getVasData:function(patientId,vassopressors,data,callback){
+		if(vassopressors==0){
+			return callback(null, data);
+		}
+
+		var dataLength=data.length;
+		var minTime=data[0].time;
+
+		data.forEach(function(eachdata,index){
+			var vass=["rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine"];
+			vass.forEach(function(eachvasso){
+				data[index][eachvasso]=-1;
+			});
+		});
+
+		return EicuModel.getwt(patientId,function(err,wts){
+			if(err){
+				return callback(err);
+			}
+			var wt= -1;
+			if(wts.length>0 && wts[0].admissionWeight){
+				wt=wts[0].admissionWeight;
+			}
+
+			return EicuModel.getVassoInfusionData(patientId,function(err,vassoinfusionData){
+				if(err){
+					return callback(err);
+				}
+
+				vassoinfusionData.forEach(function(eachVassoData){
+					
+					var time=eachVassoData.infusionoffset;
+					var label=eachVassoData.drugname;
+					var val= Number(eachVassoData.drugrate);
+					var ind= Math.round((time-minTime)/60);
+
+					if(ind>=0 && ind < dataLength && val != NaN && val>0){
+						if(label=="Norepinephrine (ml/hr)" || label =="Norepinephrine ()" || label == "norepinephrine Volume (ml) (ml/hr)" || label== "Norepinephrine"){
+							// convert ml/hr to µg/kg/min
+							if(wt!=-1){
+
+								data[ind]["rate_norepinephrine"]=(val*4/15)/wt;
+							}else{
+								data[ind]["rate_norepinephrine"]=(val*4/15)/75;
+
+							}
+							
+						}
+						if(label=="Levophed (mcg/min)"|| label=="levophed (mcg/min)" || label=="levophed  (mcg/min)" || label=="Norepinephrine (mcg/min)" || label=="Norepinephrine STD 4 mg Dextrose 5% 250 ml (mcg/min)" || label=="Norepinephrine MAX 32 mg Dextrose 5% 250 ml (mcg/min)" || label == "Norepinephrine MAX 32 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 8 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 8 mg Dextrose 5% 250 ml (mcg/min)" || label == "Norepinephrine STD 4 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 32 mg Dextrose 5% 500 ml (mcg/min)" || label == "Norepinephrine STD 32 mg Dextrose 5% 282 ml (mcg/min)"){
+							// convert µg/min to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_norepinephrine"]=val/wt;	
+							}else{
+								data[ind]["rate_norepinephrine"]=val/75;	
+
+							}
+							
+						}
+						if(label=="Norepinephrine (mcg/kg/min)"){
+							
+							data[ind]["rate_norepinephrine"]=val;
+						}
+						if(label=="Norepinephrine (mcg/kg/hr)"){
+							// convert mcg/kg/hr to µg/kg/min
+							data[ind]["rate_norepinephrine"]=val/60;
+						}
+
+						
+						
+						if(label=="Epinephrine (ml/hr)" || label=="Epinephrine ()"){
+							// convert ml/hr to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_epinephrine"]=(val*2/15)/wt;
+							}else{
+								data[ind]["rate_epinephrine"]=(val*2/15)/75;
+
+							}
+							
+						}
+
+						if(label=="Epinephrine (mcg/min)" || label=="EPINEPHrine(Adrenalin)STD 4 mg Sodium Chloride 0.9% 250 ml (mcg/min)" || label=="EPINEPHrine(Adrenalin)MAX 30 mg Sodium Chloride 0.9% 250 ml (mcg/min)" || label=="EPINEPHrine(Adrenalin)STD 7 mg Sodium Chloride 0.9% 250 ml (mcg/min)"  || label=="EPINEPHrine(Adrenalin)STD 4 mg Sodium Chloride 0.9% 500 ml (mcg/min)" || label=="Epinepherine (mcg/min)"){
+							// convert (mcg/min) to µg/kg/min
+							if(wt!=-1){
+								data[ind]["rate_epinephrine"]=val/wt;	
+							}else{
+								data[ind]["rate_epinephrine"]=val/75;	
+
+							}
+							
+						}
+
+						if(label=="Epinephrine (mcg/kg/min)"){
+							data[ind]["rate_epinephrine"]=val;
+						}
+
+						if(label=="Epinephrine (mg/kg/min)"){
+							data[ind]["rate_epinephrine"]=val;
+						}
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+							
+						}
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+						}
+
+
+						if(label=="Dobutamine (ml/hr)"|| label=="Dobutamine ()"){
+							// convert (ml/hr)
+							if(wt!=-1){
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*wt);	
+							}else{
+								data[ind]["rate_dobutamine"]=(val*1000)/(15*75);	
+
+							}
+						}
+
+						if(label=="Dobutamine (mcg/kg/min)" || label=="DOBUTamine STD 500 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)"|| label=="DOBUTamine MAX 1000 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" ){
+							data[ind]["rate_dobutamine"]=val;	
+						}
+
+						
+
+						if(label=="Dopamine (ml/hr)" || label=="Dopamine ()" || label == "Dopamine"){
+							if(wt!=-1){
+								data[ind]["rate_dopamine"]=(val*800)/(15*wt);	
+							}else{
+								data[ind]["rate_dopamine"]=(val*800)/(15*75);	
+
+							}
+							
+						}
+
+						if(label=="Dopamine (mcg/kg/min)" || label=="DOPamine STD 400 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" || label=="DOPamine MAX 800 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)"  || label=="dopamine (mcg/kg/min)" || label=="DOPamine STD 15 mg Dextrose 5% 250 ml  Premix (mcg/kg/min)" || label=="DOPamine STD 400 mg Dextrose 5% 500 ml  Premix (mcg/kg/min)"){
+							data[ind]["rate_dopamine"]=val;
+						}
+
+
+						
+
+
+						
+
+					}
+				});
+
+				return callback(null,data);
+
+			})
+
+		});
+
+	},
+	getMergeAdditionalData: function(patientId, settings, data, callback){
+		var vassopressor=1;
+		var sofa=1;
+		if(settings && settings.vassopressor){
+			vassopressor=1;
+		}
+		if(settings && settings.sofa){
+			sofa=1;
+		}
+
+		return module.exports.getVasData(patientId,vassopressor,data,function(err, vassodata){
+			if(err){
+				return callback(err);
+			}
+			return module.exports.getsofaData(sofa, vassodata, function(err,vassosofadata){
+				if(err){
+					return callback(err);
+
+				}
+				return callback(null, vassosofadata);
+			});
+
+		})
+	},
+
 	getMergeLabData: function(patientId,dataVitalSign,labItems, labRepeat, callback){
 		
 		var dataVitalSignLength=dataVitalSign.length;
@@ -487,6 +1008,198 @@ module.exports = {
 			return callback(null, decomposedVitalSignReading);
 		});
 	},
+
+	getLiverData:function(inputData,callback){
+		var settings = {
+				vassopressors:1,
+				sofa:1
+				};
+		var patientId=inputData.patientunitstayid;
+
+		var  inputFeatures={"albumin":{"history":0,"dbsource":"lab"},"PT":{"history":0,"dbsource":"lab"},"ALT (SGPT)":{"history":0,"dbsource":"lab"},"PT - INR":{"history":0,"dbsource":"lab"},"PTT":{"history":0,"dbsource":"lab"},"total bilirubin":{"history":0,"dbsource":"lab"},"direct bilirubin":{"history":0,"dbsource":"lab"},"AST (SGOT)":{"history":0,"dbsource":"lab"},"creatinine":{"history":0,"dbsource":"lab"},"sodium":{"history":0,"dbsource":"lab"},"BUN":{"history":0,"dbsource":"lab"},"platelets x 1000":{"history":0,"dbsource":"lab"},"map":{"history":0,"dbsource":"vitalPeriodic"},"respiration":{"history":0,"dbsource":"vitalPeriodic"},"heartrate":{"history":0,"dbsource":"vitalPeriodic"},"temperature":{"history":0,"dbsource":"vitalPeriodic"},"systemicsystolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicdiastolic":{"history":0,"dbsource":"vitalPeriodic"},"systemicmean":{"history":0,"dbsource":"vitalPeriodic"},"sao2":{"history":0,"dbsource":"vitalPeriodic"},"alkaline phos.":{"history":0,"dbsource":"lab"},"total protein":{"history":0,"dbsource":"lab"},"pH":{"history":0,"dbsource":"lab"},"lactate":{"history":0,"dbsource":"lab"}};
+
+		var icd9Codes=["038.9, 570, R65.20, K72.0","570, K72.0","570, K72.9","571.2, K70.3","571.6, K74.5","571.5, K74.60","571.5, K74.69","571.1, K70.1","572.2, K72.91","572.0, K75.0","572.4, K76.7","572.2","E980.0, 573.3","070.51, 573.1, B19.10","573.4, K76.3","573.1, 070.1, B15.9","573.9, K76.9","070.1, 573.1, B15.9","070.30, 573.1, B19.10","573.1, B17.9","573.1, 078.5, B25.1","573.1, 070.30, B17.1","075, 573.1, B27.09","573.1, 070.51, B17.1","573.3, T71.2"];
+
+		var headermap={'patientunitstayid':'CaseId','observationtime24':'24hTimestamp','temperature':'Temp','heartrate':'Pulse','respiration':'Resp','glasgow_coma_score':'Score_(Glasgow_Coma_Scale)','bedside glucose':'Blood_Glucose','WBC x 1000':'WBC_(WHITE_BLOOD_COUNT)','systemicsystolic':'Systolic_BP','map':'MAP','creatinine':'CREATININE_SERUM','PT - INR':'INR','PTT':'PTT','platelets x 1000':'PLATELET_COUNT','total bilirubin':'BILIRUBIN__TOTAL','lactate':'LACTATE__WHOLE_BLOOD','heartrate_hist_1':'HR_Hist{1}','heartrate_hist_2':'HR_Hist{2}','heartrate_hist_3':'HR_Hist{3}','systemicsystolic_hist_1':'SBP_Hist{1}','systemicsystolic_hist_2':'SBP_Hist{2}','systemicsystolic_hist_3':'SBP_Hist{3}','map_hist_1':'MAP_Hist{1}','map_hist_2':'MAP_Hist{2}','map_hist_3':'MAP_Hist{3}','heartrate_fut_1':'HR_Predict{1}','heartrate_fut_2':'HR_Predict{2}','heartrate_fut_3':'HR_Predict{3}','systemicsystolic_fut_1':'SBP_Predict{1}','systemicsystolic_fut_2':'SBP_Predict{2}','systemicsystolic_fut_3':'SBP_Predict{3}','map_fut_1':'MAP_Predict{1}','map_fut_2':'MAP_Predict{2}','map_fut_3':'MAP_Predict{3}'};
+
+
+		var outputFeatures={};
+
+		var labRepeat=0;
+
+		var labItems= [];
+
+		var vitalReadings=[];
+
+		var minDiagnosisTime=4;
+
+		var minReading=8;
+
+		Object.keys(inputFeatures).forEach(function(label){
+			if(inputFeatures[label].dbsource==="lab"){
+				labItems.push(label);
+			}
+			if(inputFeatures[label].dbsource==="vitalPeriodic"){
+				vitalReadings.push(label);
+			}
+		});
+
+		Object.keys(outputFeatures).forEach(function(label){
+			if(outputFeatures[label].dbsource==="lab"){
+				labItems.push(label);
+			}
+			if(outputFeatures[label].dbsource==="vitalPeriodic"){
+				vitalReadings.push(label);
+			}
+		});
+
+		return module.exports.getVitalsignData(patientId, function(err, dataVitalSign){
+			if(err){
+				return callback(err);
+			}			
+						if(dataVitalSign.length<=0){
+							//var error = ;
+							//console.log(error);
+							return callback(new Error('No Vital Data found'));
+						}
+
+						//Get Data from the lab table
+						return module.exports.getMergeLabData(patientId, dataVitalSign, labItems, labRepeat,function(err,dataVitalSignLab){
+							if(err){
+								return callback(err);
+							}
+							return module.exports.getMergeAdditionalData(patientId, settings, dataVitalSignLab, function(err,dataVitalSignLabAddtion){	
+							// get data from the diagnosis Table;
+								return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLabAddtion,icd9Codes,function(err,dataVitalSignLabDiagnosis){
+									if(err){
+											return callback(err);
+										}
+									// Add history and Predictions to the data;
+									return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+										if(err){
+											return callback(err);
+										}
+										//Get proper Headers as per the input
+										return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+											if(err){
+												return callback(err);
+											}
+											//Remove Rows with any null outputs and all null input
+											return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){	
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length==0){
+													return callback(new Error('No  Data found'));
+												}
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+													//todo
+													//return callback();
+													//return callback(new Error(''));
+												}
+												if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+													var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+													var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+													var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+													if(diagnosis==1){
+														if(initialDiagnosis<minDiagnosisTime*60+startTime){
+															//todo
+															//return callback();
+														}
+													}
+												}
+
+
+												var output={};
+												
+												var vitalSignData=[];
+												var outputData=[];
+												var outputDataWithoutNull=[];
+												var patientData={
+													patientId:patientId,
+													name:"John Doe",
+													"doa":"01/01/1970"
+												};
+
+												var logs=[];
+
+
+												//get patient data=
+												var firstData=trimmedDataVitalSignLabDiagnosisPredictHist[0];
+												if(firstData.sex && firstData.sex==1){
+													patientData.sex='Male'
+												}else{
+													patientData.sex='Female'
+												}
+
+												if(firstData.age){
+													patientData.age=firstData.age;
+												}else{
+													patientData.age=-1
+												}
+
+												 
+												trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+													var temp={};
+													var vital={};
+													var tempWithoutNull={};
+
+													tempWithoutNull["time"]=eachRow["time"];
+													headers.forEach(function(header){
+
+														if(isNaN(eachRow[header])){
+															eachRow[header]=-1;
+														}else{
+															eachRow[header]=parseInt(eachRow[header]);
+
+														}
+														var tempKey='';
+														if(headermap[header]){
+															temp[headermap[header]]=eachRow[header];
+															tempKey=headermap[header];
+														}else{
+															temp[header]=eachRow[header];
+															tempKey=header;
+														}
+
+														if(eachRow[header]!=-1){
+															tempWithoutNull[tempKey]=temp[tempKey];
+															if(["CaseId","time","diagnosis","firstdiagnosis","diagnosisstring","icd9code","sex","age","died","dischargeTime","lengthofStay"].indexOf(tempKey)==-1){
+																var timestamp=temp["time"]*60*1000;
+																var timeData=new Date(timestamp);
+																logs.push(timeData.toString()+' - ' + tempKey + ' - ' + temp[tempKey]);
+															}
+														}
+
+													});
+
+													vital["time"]=temp["time"];
+
+													["Temp","Systolic_BP","Pulse","MAP","Resp","sao2","systemicdiastolic","systemicmean"].forEach(function(eachHeader){
+														if(temp[eachHeader]!=-1){
+															vital[eachHeader]=temp[eachHeader];
+														}
+													});
+
+													vitalSignData.push(vital);
+													outputData.push(temp);
+													outputDataWithoutNull.push(tempWithoutNull);
+												});
+
+												output={
+													vitalSignData:vitalSignData,
+													outputData:outputData,
+													outputDataWithoutNull:outputDataWithoutNull,
+													patientData:patientData,
+													logs:logs
+												};
+												
+												return callback(null,output);
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+	},
 	generateReport: function(inputData,callback){
 		try{
 
@@ -501,7 +1214,10 @@ module.exports = {
 			//excludeIcd9Codes=["785.52, R65.21","785.52, 785.52, R65.21","038.9, 785.52, R65.21", "995.90"];
 
 			//Exclude all icd9codes for sepsis
-			excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
+			//excludeIcd9Codes=["995.91, R65","785.59, 038.9, 995.92, R65.21","995.92, R65.2","995.92, R65.20","785.59, 038.9, 995.92","995.90"];
+
+
+			// excludeIcd9Codes=["995.90"];
 
 
 			var  inputFeatures=inputData.inputfeatures;
@@ -518,6 +1234,14 @@ module.exports = {
 			var minDiagnosisTime=4;
 
 			var minReading=8;
+
+			var vassopressors=1;
+
+			var settings = {
+				vassopressors:1,
+				sofa:1
+				};
+
 
 			var trainingDatafileName="trainingData_"+Math.floor(Date.now() / 1000)+".csv";
 			var validationDatafileName="validationData_"+Math.floor(Date.now() / 1000)+".csv";
@@ -615,143 +1339,159 @@ module.exports = {
     							return callback(err);
     						}
 
+    						// //Get vassopressors data
+    						return module.exports.getMergeAdditionalData(patientId, settings, dataVitalSignLab, function(err,dataVitalSignLabAddtion){
     						// get data from the diagnosis Table;
-    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLab,icd9Codes,function(err,dataVitalSignLabDiagnosis){
+	    						return module.exports.getMergeDiagnosisPatientTable(patientId,dataVitalSignLabAddtion,icd9Codes,function(err,dataVitalSignLabDiagnosis){
 
-    							if(err){
-    									return callback(err);
-    								}
+	    							if(err){
+	    									return callback(err);
+	    								}
 
-    							// Add history and Predictions to the data;
+	    							// Add history and Predictions to the data;
 
-    							return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
-    								if(err){
-    									return callback(err);
-    								}
-
-
-    								//Get proper Headers as per the input
-
-    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
-    									if(err){
-    										return callback(err);
-    									}
-
-    									//Remove Rows with any null outputs and all null input
-    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
-    										
-    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
-    											return callback();
-    										}
-
-    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
-    											var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
-    											var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
-    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
-    											if(diagnosis==1){
-    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
-    													return callback();
-    												}
-    											}
-    										}
-
-    										var outputData=[];
-    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
-    											temp={};
-    											headers.forEach(function(header){
-    												if(headermap[header]){
-    													temp[headermap[header]]=eachRow[header];
-    												}else{
-    													temp[header]=eachRow[header];
-    												}
-    											});
-    											outputData.push(temp);
-    										});
+	    							return module.exports.getDataWithHistoryPrediction(dataVitalSignLabDiagnosis, inputFeatures, outputFeatures, function(err, dataVitalSignLabDiagnosisPredictHist){
+	    								if(err){
+	    									return callback(err);
+	    								}
 
 
+	    								//Get proper Headers as per the input
 
-    										var newHeaders=[];
-    										headers.forEach(function(header){
-    											if(headermap[header]){
-    												newHeaders.push(headermap[header]);
-    											}else{
-    												newHeaders.push(header);
-    											}
-    										});
+	    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,function(err, headers, inputHeaders, targetHeaders){
+	    									if(err){
+	    										return callback(err);
+	    									}
+
+	    									//Remove Rows with any null outputs and all null input
+	    									return module.exports.trimNullData(inputHeaders,targetHeaders, dataVitalSignLabDiagnosisPredictHist, function(err, trimmedDataVitalSignLabDiagnosisPredictHist){
+	    										
+	    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length<=4){
+	    											return callback();
+	    										}
+
+	    										if(trimmedDataVitalSignLabDiagnosisPredictHist.length>0){
+	    											var diagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis
+	    											var initialDiagnosis=trimmedDataVitalSignLabDiagnosisPredictHist[0].firstdiagnosis;
+	    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
+	    											if(diagnosis==1){
+	    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
+	    													//return callback();
+	    												}
+	    											}
+	    										}
+
+	    										var outputData=[];
+	    										trimmedDataVitalSignLabDiagnosisPredictHist.forEach(function(eachRow){
+	    											temp={};
+	    											headers.forEach(function(header){
+	    												if(headermap[header]){
+	    													temp[headermap[header]]=eachRow[header];
+	    												}else{
+	    													temp[header]=eachRow[header];
+	    												}
+	    											});
+	    											outputData.push(eachRow);
+	    										});
 
 
 
+	    										var newHeaders=[];
+	    										headers.forEach(function(header){
+	    											if(headermap[header]){
+	    												newHeaders.push(headermap[header]);
+	    											}else{
+	    												newHeaders.push(header);
+	    											}
+	    										});
 
 
-											var fileName='';
-											if(patientIdDic[patientId].file=='train'){
-												fileName=trainingDatafileName;
-												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
-    												patientTrainingWithDiagnosis = patientTrainingWithDiagnosis+1;
+
+
+
+
+
+												var fileName='';
+												if(patientIdDic[patientId].file=='train'){
+													fileName=trainingDatafileName;
+													if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+	    												patientTrainingWithDiagnosis = patientTrainingWithDiagnosis+1;
+													}else{
+														patientTrainingWithoutDiagnosis = patientTrainingWithoutDiagnosis+1;
+													}
 												}else{
-													patientTrainingWithoutDiagnosis = patientTrainingWithoutDiagnosis+1;
+													fileName=validationDatafileName;
+													if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
+	    												validationTrainingWithDiagnosis = validationTrainingWithDiagnosis+1
+													}else{
+														validationTrainingWithoutDiagnosis = validationTrainingWithoutDiagnosis+1;
+													}
+
 												}
-											}else{
-												fileName=validationDatafileName;
-												if(trimmedDataVitalSignLabDiagnosisPredictHist[0].diagnosis==1){
-    												validationTrainingWithDiagnosis = validationTrainingWithDiagnosis+1
-												}else{
-													validationTrainingWithoutDiagnosis = validationTrainingWithoutDiagnosis+1;
+												
+												if(outputData.length==0){
+													return callback();
 												}
 
-											}
-											console.log(outputData.length);
-											if(outputData.length==0){
-												return callback();
-											}
-
-				    						if(wflagt==0 && fileName==trainingDatafileName){
-				    							wflagt=1;
-				    						var csv = json2csv({ data: outputData, fields: newHeaders});
-
-				    						
-											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) return callback(err);
-				  									//console.log('file saved');
-				    								return callback();
-											});
-				    							
-				    						}
-
-				    						if(wflagv==0 && fileName==validationDatafileName){
-				    							wflagv=1;
-				    						var csv = json2csv({ data: outputData, fields: newHeaders});
-				 							
-											return fs.writeFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) {
-				  								return callback(err);	
-				  								}
-				  							//console.log('file saved');
-				    							return callback();
-											});
-				    							
-				    						}
+												
 
 
+												newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
+												// newHeaders=Object.keys(outputData[0]);
+												
+												// console.log(newHeaders);
 
-				    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
-				 							csv="\n"+csv;
-											return fs.appendFile('./dataset/'+fileName, csv, function(err) {
-				  								if (err) return callback(err);
-				  							//console.log('file saved');
-				    						return callback();
-	    									
+												//newHeaders=["patientunitstayid", "patientHealthSystemStayID", "diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay_icu","lengthofStay_hospital","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3"];
+												
+
+					    						if(wflagt==0 && fileName==trainingDatafileName){
+					    							wflagt=1;
+					    						var csv = json2csv({ data: outputData, fields: newHeaders});
+
+					    						
+												return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) return callback(err);
+					  									//console.log('file saved');
+					    								return callback();
+												});
+					    							
+					    						}
+
+					    						if(wflagv==0 && fileName==validationDatafileName){
+					    							wflagv=1;
+					    						var csv = json2csv({ data: outputData, fields: newHeaders});
+					 							
+												return fs.writeFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) {
+					  								return callback(err);	
+					  								}
+					  							//console.log('file saved');
+					    							return callback();
+												});
+					    							
+					    						}
+
+
+
+					    						var csv = json2csv({ data: outputData, fields: newHeaders, hasCSVColumnTitle:false});
+					 							csv="\n"+csv;
+												return fs.appendFile('./dataset/'+fileName, csv, function(err) {
+					  								if (err) return callback(err);
+					  							//console.log('file saved');
+					    						return callback();
+		    									
+		    									});
+	    										
 	    									});
-    										
-    									});
+	    							});
+	    									
 
+									});
+	    						});	
 
-
-    							});
-    									
-
-								});
     						});
+
+    						
 
     					})
     					

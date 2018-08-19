@@ -12,6 +12,7 @@ module.exports = function(app){
     app.get('/getMimicData', DataRoute.getMimicData);
     app.get('/getInitialData', DataRoute.getInitialData);
     app.post('/generateReport', DataRoute.generateReport);
+    app.get('/getLiverData', DataRoute.getLiverData);
 
     app.get('/safiatest', function(req, res){
     	var data={

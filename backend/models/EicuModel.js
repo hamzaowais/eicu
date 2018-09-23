@@ -62,6 +62,69 @@ module.exports = {
 			 return callback(e);
 		}
 	},
+	getGcsData:function(patientId,callback){
+		try{
+			
+			var queryParams=[patientId];
+
+			var query="select  *  from eicu.pivoted_score where patientunitstayid= $1";
+			
+			const client= new Client(database['eicu']); 
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 	return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+	},
+	getventData:function(patientId , callback){
+		try{
+			
+			var queryParams=[patientId];
+
+			var query="select  mechvent from eicu.ventData where patientunitstayid= $1";
+			
+			const client= new Client(database['eicu']); 
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 	return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
 	getwt:function(patientId , callback){
 		try{
 			
@@ -289,7 +352,6 @@ module.exports = {
 			
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code not in ("+ params.join(',')+");";
 			var query="select distinct(patientunitstayid) from eicu.diagnosis where  patientunitstayid not in (select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+"))";
-			
 
 			const client= new Client(database['eicu']); 
 
@@ -341,7 +403,8 @@ module.exports = {
 
 
 			if(params1.length>0){
-				var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+") and patientunitstayid not in (select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params1.join(',')+"))";
+
+				var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+") and patientunitstayid not in (select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params1.join(',')+"))"; 
 			}else{
 				var query="select distinct(patientunitstayid) from eicu.diagnosis where icd9code in ("+ params.join(',')+")";
 

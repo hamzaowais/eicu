@@ -651,6 +651,55 @@ module.exports = {
 
 
 	},
+	getVentGcsData: function(patientId,data,callback){
+		return EicuModel.getventData(patientId,function (err,ventData){
+			if(err){
+				return callback(err);
+			}
+
+			var isVent=0;
+			if(ventData.length>0 && ventData[0].mechvent){
+					isVent=ventData[0].mechvent;
+				}
+
+
+			data.forEach(function(eachData){
+				eachData['isVent']=isVent;
+				eachData['gcs']=-1;
+
+
+
+			})
+
+			return EicuModel.getGcsData(patientId,function(err,ventData){
+				if(err){
+					return callback(err);
+				}
+
+				
+			
+				
+				var dataLength=data.length;
+				var minTime=data[0].time;
+
+				ventData.forEach(function(eachventData){
+					
+					var time=eachventData.nursingchartoffset;
+					var val= Number(eachventData.gcs);
+					var ind= Math.round((time-minTime)/60);
+
+					if(ind>=0 && ind < dataLength && val != NaN && val>0){
+						data[ind]["gcs"]=val;
+					}
+				});
+
+				return callback(null,data);
+
+				})
+
+
+		});
+	},
 	getVasData:function(patientId,vassopressors,data,callback){
 		if(vassopressors==0){
 			return callback(null, data);
@@ -670,6 +719,7 @@ module.exports = {
 			if(err){
 				return callback(err);
 			}
+
 			var wt= -1;
 			if(wts.length>0 && wts[0].admissionWeight){
 				wt=wts[0].admissionWeight;
@@ -834,13 +884,18 @@ module.exports = {
 			}
 			console.log("extract Vasso Data");
 			console.log(start-Date.now());
-			return module.exports.getsofaData(sofa, vassodata, function(err,vassosofadata){
-				if(err){
-					return callback(err);
+			return module.exports.getVentGcsData(patientId,vassodata, function(err,ventData){
 
-				}
-				return callback(null, vassosofadata);
-			});
+				return module.exports.getsofaData(sofa, ventData, function(err,vassosofadata){
+					if(err){
+						return callback(err);
+
+					}
+					return callback(null, vassosofadata);
+				});
+
+				
+			})
 
 		})
 	},
@@ -1317,6 +1372,7 @@ module.exports = {
     			// Perform operation on file here.
     				//console.log('Processing PatientID ' + patientId);
     				console.log(currentPatient.length);
+    				console.log(currentPatient.current);
     				console.log('Progeress:'+ ((currentPatient.current/currentPatient.length)*100));
 
     				console.log("Nummber of Patients in the training data set with Diagnosis: ");
@@ -1473,7 +1529,7 @@ module.exports = {
 												
 
 
-												newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
+												newHeaders=["patientunitstayid","diagnosis","diagnosisstring","icd9code","firstdiagnosis","firstSepticShockDiagnosis","firstSepsisDiagnosis","age","lengthofStay_icu","lengthofStay_hospital","died","dischargeTime","sex","time","temperature","sao2","heartrate","respiration","systemicsystolic","systemicdiastolic","map","isVent","gcs","WBC x 1000","paO2","FiO2","total bilirubin","creatinine","platelets x 1000","bedside glucose","lactate","PT - INR","PTT","pao2Fio2ratio","rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","map_hist_1","map_hist_2","map_hist_3","heartrate_hist_1","heartrate_hist_2","heartrate_hist_3","systemicsystolic_hist_1","systemicsystolic_hist_2","systemicsystolic_hist_3","heartrate_fut_1","heartrate_fut_2","heartrate_fut_3","map_fut_1","map_fut_2","map_fut_3","systemicsystolic_fut_1","systemicsystolic_fut_2","systemicsystolic_fut_3"];
 												// newHeaders=Object.keys(outputData[0]);
 												
 												// console.log(newHeaders);

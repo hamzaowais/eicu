@@ -36,7 +36,7 @@ module.exports = {
 			
 			var queryParams=[patientId];
 
-			var query="select  *  from eicu.infusionDrug where patientunitstayid= $1";
+			var query="select * from eicu.infusionDrug where patientunitstayid= $1";
 			
 			const client= new Client(database['eicu']); 
 
@@ -223,6 +223,60 @@ module.exports = {
   			
   				if(!err) {
     				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
+	getMicroLabsData:function(patientId,microlabsItems,callback){
+		try{
+
+
+			if(microlabsItems.length==0){
+				return callback(null, []);
+			}
+			
+			var queryParams=[patientId];
+
+			var params=[];
+			for(var i = 1; i <= microlabsItems.length; i++) {
+  				params.push('$' + (i+1));
+  				queryParams.push(microlabsItems[i-1]);
+			}
+
+
+
+			var query="select *  from eicu.microlab where patientunitstayid= $1 and culturesite in ("+params.join(",")+")  and organism != 'no growth' order by culturetakenoffset;";
+
+
+			
+
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+
+			
+  			
+  				if(!err) {
+    				client.end();
+    				// console.log(res.rows);
 					return callback(null,res.rows);
 					
 				} else {

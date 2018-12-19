@@ -179,17 +179,26 @@ module.exports = {
 		});
 
 	},
-	getDataHeaders: function(inputFeatures, outputFeatures, icd9codes,microlabsFeatures, callback){
-		var headers=["patientunitstayid","time", "diagnosis", "sex","age","lengthofStay_icu", "lengthofStay_hospital","died","dischargeTime"];
+	getDataHeaders: function(inputFeatures, outputFeatures, icd9codes,microlabsFeatures,inputoutdata, medication,callback){
+		var headers=["patientunitstayid","time", "diagnosis", "firstdiagnosis","sex","age","lengthofStay_icu", "lengthofStay_hospital","died","dischargeTime","isVent","gcs","cardiovascular","kidneys","coagulation","liver","respiratory","nervous","sofa","qsofa","delSofa","sepsis3","sepsis3SepticShock","pao2Fio2ratio",];
 		
 
 		var inputHeaders=[];
 		var targetHeaders=[];
 
+		inputoutdata.forEach(function(label){
+			headers.push(label);
+			inputHeaders.push(label);
+
+		})
+
 		icd9codes.forEach(function(icd9code){
 			headers.push(icd9code);
 			inputHeaders.push(icd9code);
 		})
+
+
+
 
 		
 		Object.keys(inputFeatures).forEach(function(label){
@@ -200,6 +209,18 @@ module.exports = {
 		microlabsFeatures.forEach(function(label){
 			headers.push(label);
 			inputHeaders.push(label);
+		})
+
+		medication.forEach(function(med){
+			headers.push(med);
+			inputHeaders.push(med);
+		})
+
+		var vassosnames= ["rate_norepinephrine","rate_epinephrine","rate_dopamine","rate_dobutamine"];
+
+		vassosnames.forEach(function(med){
+			headers.push(med);
+			inputHeaders.push(med);
 		})
 
 		Object.keys(inputFeatures).forEach(function(label){
@@ -285,6 +306,7 @@ module.exports = {
 			dataVitalSignLab.forEach(function(eachVitalSign,index){
 				
 				dataVitalSignLab[index]['diagnosis']=diagnosis;
+				dataVitalSignLab[index]['firstdiagnosis']=-1;
 				icd9codes.forEach(function(icd9code){
 					dataVitalSignLab[index][icd9code]=0
 
@@ -306,7 +328,7 @@ module.exports = {
 
 
 				
-				var firstdiagnosis=Math.min(firstdiagnosis,time);
+				firstdiagnosis=Math.min(firstdiagnosis,time);
 				
 				var ind= Math.round((time-minTime)/60);
 
@@ -314,6 +336,15 @@ module.exports = {
 					dataVitalSignLab[ind][icd9code]=1;
 				}
 			});
+
+			dataVitalSignLab.forEach(function(eachVitalSign,index){
+				if(firstdiagnosis!=1000000000000000000){
+					dataVitalSignLab[index]['firstdiagnosis']=firstdiagnosis;
+				}
+				
+			});
+
+
 			
 			return EicuModel.getPatientData(patientId ,function(err,patientData){
 					var sex=-1;
@@ -337,17 +368,19 @@ module.exports = {
 							sex=0;
 						}
 
+						if(patientData[0].age=="> 89"){
+							patientData[0].age=90;
+						}
+						
+						if(!isNaN(patientData[0].age)&&Number(patientData[0].age)!=NaN){
+							age=Number(patientData[0].age);
+						}
 
-						age=patientData[0].age;
 						dischargeTime=patientData[0].unitdischargeoffset;
 						hospitaladmitoffset=patientData[0].hospitaladmitoffset;
 						hospitaldischargeoffset=patientData[0].hospitaldischargeoffset;
 						patientHealthSystemStayID=patientData[0].patientHealthSystemStayID;
 
-				
-
-
-						
 						lengthofStay_hospital=(hospitaldischargeoffset-hospitaladmitoffset)/60;
 
 						if(patientData[0].hospitaldischargestatus=='Alive'){
@@ -379,6 +412,8 @@ module.exports = {
 		});
 	}, 
 	getsofaData: function(sofa, vassodata, callback){
+		
+
 		if(sofa==0){
 			return callback(null, vassodata);
 		}
@@ -636,12 +671,17 @@ module.exports = {
 
 
 	},
-	getVentGcsData: function(patientId,data,microlabsFeatures,callback){
+	getVentGcsData: function(patientId,data,microlabsFeatures,inputoutdata,medication, callback){
+		console.log("*********************");
+		var medicationHeader=["Ceftriaxone","Vancomycin","Levofloxacin","Ciprofloxacin","metronidazole","Azithromycin"]
+
+		var start = Date.now();
+
 		return EicuModel.getventData(patientId,function (err,ventData){
 			if(err){
 				return callback(err);
 			}
-
+			console.log(start-Date.now());
 			var isVent=0;
 			if(ventData.length>0 && ventData[0].mechvent){
 					isVent=ventData[0].mechvent;
@@ -651,10 +691,18 @@ module.exports = {
 			data.forEach(function(eachData){
 				eachData['isVent']=isVent;
 				eachData['gcs']=-1;
+				
 				microlabsFeatures.forEach(function(eachFeature){
 					eachData[eachFeature]=-1;
 				});
 
+				inputoutdata.forEach(function(eachFeature){
+					eachData[eachFeature]=-1;
+				})
+
+				medicationHeader.forEach(function(eachFeature){
+					eachData[eachFeature]=0;
+				})
 
 
 			})
@@ -664,7 +712,7 @@ module.exports = {
 					return callback(err);
 				}
 
-				
+				console.log(start-Date.now());
 			
 				
 				var dataLength=data.length;
@@ -684,7 +732,7 @@ module.exports = {
 				return EicuModel.getMicroLabsData(patientId,microlabsFeatures,function(err,microlabData){
 					var dataLength=data.length;
 					var minTime=data[0].time;
-
+					console.log(start-Date.now());
 					microlabData.forEach(function(eachMicroLabData){
 						var featureName=eachMicroLabData.culturesite;
 						var time=eachMicroLabData.culturetakenoffset;
@@ -699,8 +747,92 @@ module.exports = {
 							data[ind][featureName]=val;
 						}
 					});
-					return callback(null,data);
 
+					return EicuModel.getInputOutputData(patientId,inputoutdata, function(err,iodata){
+						var dataLength=data.length;
+						var minTime=data[0].time;
+						console.log(start-Date.now());
+						iodata.forEach(function(eachioData){
+							var featureName=eachioData.celllabel;
+							var time=eachioData.intakeoutputoffset;
+							var val = Number(eachioData.outputtotal);
+							var ind= Math.round((time-minTime)/60);
+						
+
+							if(ind>=0 && ind < dataLength && val != NaN && val>0){
+								data[ind][featureName]=val;
+							}
+
+
+						});
+						console.log("*********************");
+
+
+						return EicuModel.getMedicationData(patientId, medication, function(err,medicationData){
+							var dataLength=data.length;
+							var minTime=data[0].time;
+							medicationData.forEach(function(eachmedication){
+								var label=eachmedication.drugname;
+								var startTime=eachmedication.drugstartoffset;
+								var endTime=eachmedication.drugstartoffset;
+								var startInd= Math.round((startTime-minTime)/60);
+								var endInd= Math.round((endTime-minTime)/60);
+
+								if(startInd<0){
+									startInd=0;
+								}
+								if(endInd>dataLength-1){
+									endInd=dataLength-1;
+								}
+
+								var label1='';
+
+								if (label=="1 EACH VIAL : CEFTRIAXONE SODIUM 1 G IJ SOLR" || label=="cefTRIAXone" || label=="cefTRIAXone 1 GRAM in NS 50 mL IVPB" || label=="cefTRIAXone in D5W (ROCEPHIN) ivpb 1 g" || label=="CEFTRIAXONE SODIUM 1 G IJ SOLR"){
+									label1="Ceftriaxone";
+								}
+
+
+								if(label=="vancomycin"|| label=="VANCOMYCIN"|| label=="VANCOMYCIN 1 G MINI-BAG PLUS (VIAL MATE)"|| label=="VANCOMYCIN 1 G/200 ML D5W"|| label=="VANCOmycin 1 GM in NS 250 mL IVPB"|| label=="VANCOMYCIN 1,000 MG IV SOLUTION : 1 EACH VIAL"|| label=="VANCOMYCIN 1.25 G/250 ML NS"|| label=="VANCOMYCIN 1.25 GM IN NS 250 ML IVPB (REPACKAGE)"|| label=="VANCOmycin 1.25 GM in NS 500ML IVPB"|| label=="VANCOMYCIN 1.5 G/500 ML NS"|| label=="VANCOMYCIN 1.5 GM IN NS 250 ML IVPB (REPACKAGE)"|| label=="VANCOmycin 1.5 GM in NS 500ML IVPB"|| label=="VANCOmycin 750 MG in NS 250 mL IVPB"|| label=="VANCOMYCIN CONSULT TO PHARMACY"|| label=="VANCOMYCIN HCL"|| label=="VANCOMYCIN HCL 1 GM VIAL"|| label=="VANCOMYCIN HCL 10 G IV SOLR"|| label=="vancomycin hcl 1000 mg iv solr"|| label=="VANCOMYCIN HCL 1000 MG IV SOLR"|| label=="VANCOMYCIN HCL IN DEXTROSE 1 GM/200ML IV SOLN"|| label=="vancomycin in D5W (VANCOCIN) ivpb 1 g"|| label=="VANCOMYCIN INJ 1,000 MG VIAL."){
+									label1="Vancomycin";
+								}
+
+
+
+								if(label=="150 ML : LEVOFLOXACIN IN D5W 750 MG/150ML IV SOLN" || label=="150 ML FLEX CONT : LEVOFLOXACIN IN D5W 5 MG/ML IV SOLN" || label=="LEVOFLOXACIN" || label=="LEVOFLOXACIN 500 MG PO TABS" || label=="LEVOFLOXACIN 500mg in D5W 100mL RT" || label=="LEVOFLOXACIN 750 mg in D5W 150mL" || label=="LEVOFLOXACIN 750 MG PO TABS" || label=="LEVOFLOXACIN IN D5W 500 MG/100ML IV SOLN" || label=="LEVOFLOXACIN IN D5W 750 MG/150ML IV SOLN"){
+									label1="Levofloxacin"
+								}
+
+
+
+
+								if(label=="CIPROFLOXACIN IN D5W 400 MG/200ML IV SOLN"){
+									label1="Ciprofloxacin";
+								}
+
+
+								if(label=="100 ML  -  METRONIDAZOLE IN NACL 5-0.79 MG/ML-% IV SOLN" || label== "metroNIDAZOLE" || label== "metroNIDAZOLE 500 MG in 100ML RTU-PB" || label== "METRONIDAZOLE 500 MG PO TABS" || label== "METRONIDAZOLE 500 MG/100 ML"){
+									label1="metronidazole"
+								}
+
+
+
+								if(label=="azithromycin" || label=="AZITHROMYCIN" || label=="AZITHromycin 500 mg in NS 250 mL IV" || label=="AZITHROMYCIN 500 MG IV SOLR"){
+									label1="Azithromycin";
+								}
+
+								for(var ind=startInd; ind<=endInd;ind++){
+									data[ind][label1]=1;
+								}
+
+
+							});
+							return callback(null,data);
+						});
+						
+
+
+					})
+					
 
 
 				})
@@ -714,6 +846,7 @@ module.exports = {
 		});
 	},
 	getVasData:function(patientId,vassopressors,data,callback){
+		
 		if(vassopressors==0){
 			return callback(null, data);
 		}
@@ -885,6 +1018,10 @@ module.exports = {
 		var vassopressor=1;
 		var sofa=1;
 		var microlabsFeatures=settings.microlabsFeatures;
+		var inputoutdata=settings.inputoutdata;
+		var urine=settings.urine;
+		var medication=settings.medication;
+
 		if(settings && settings.vassopressor){
 			vassopressor=1;
 		}
@@ -896,17 +1033,18 @@ module.exports = {
 			if(err){
 				return callback(err);
 			}
-			console.log("extract Vasso Data");
 			console.log(start-Date.now());
-			return module.exports.getVentGcsData(patientId,vassodata,microlabsFeatures, function(err,ventData){
-
+			console.log("extract all data ventsofa");
+			
+			return module.exports.getVentGcsData(patientId,vassodata,microlabsFeatures, inputoutdata, medication,function(err,ventData){
+				console.log(start-Date.now());
 				return module.exports.getsofaData(sofa, ventData, function(err,vassosofadata){
 					if(err){
 						return callback(err);
 
 					}
 
-
+					console.log(start-Date.now());
 					return callback(null, vassosofadata);
 				});
 
@@ -948,6 +1086,18 @@ module.exports = {
 				var time=eachLabReading.labresultoffset;
 				var label=eachLabReading.labname;
 				var val= Number(eachLabReading.labresult);
+				var valstr=eachLabReading.labresulttext;
+
+				if(label=="WBC's in urine" && (valstr == ">100"|| valstr == ">180"|| valstr == ">182"|| valstr == ">200"|| valstr == ">30"|| valstr == ">300"|| valstr == ">50"|| valstr == ">50"|| valstr == ">50.0"|| valstr == ">55"|| valstr == ">80")){
+					val =30;
+				}
+
+				if(label=="WBC's in urine" && ((valstr=="0"|| valstr=="1"|| valstr=="11"|| valstr=="14"|| valstr=="15"|| valstr=="18"|| valstr=="2"|| valstr=="3"|| valstr=="4"|| valstr=="57"|| valstr=="61"|| valstr=="62"|| valstr=="7"|| valstr=="71"|| valstr=="8"|| valstr=="9"))){
+					val =Number(valstr);
+				}
+
+
+				
 
 				
 				var ind= Math.round((time-minTime)/60);
@@ -958,7 +1108,6 @@ module.exports = {
 
 				
 				var timeDif=Math.abs(tempLabEvents[ind].time-time);
-
 
 
 				if(timeDif<tempLabEvents[ind][label].timeDif){
@@ -1043,9 +1192,9 @@ module.exports = {
 					decomposedIndex=decomposedIndex+1;
 				}else{
 					vitalLabels.forEach(function(label){
-						if(currentVitalSign[label]!=null){
+						if(currentVitalSign[label]!=null && Number(currentVitalSign[label])!=NaN){
 							if(currentVitalSignDecomposed[label].timeDif>diff){
-								currentVitalSignDecomposed[label].val=currentVitalSign[label];
+								currentVitalSignDecomposed[label].val=Number(currentVitalSign[label]);
 								currentVitalSignDecomposed[label].timeDif=diff;
 							}
 						}
@@ -1091,7 +1240,10 @@ module.exports = {
 			var icd9Codes=inputData.icd9codes;
 
 			var microlabsFeatures=["Sputum, Expectorated","Sputum, Tracheal Specimen", "Bronchial Lavage","Urine, Catheter Specimen", "Urine, Voided Specimen"];
+			var inputoutdata =["Urine"];
 
+			var medication= ["1 EACH VIAL : CEFTRIAXONE SODIUM 1 G IJ SOLR","cefTRIAXone","cefTRIAXone 1 GRAM in NS 50 mL IVPB","cefTRIAXone in D5W (ROCEPHIN) ivpb 1 g","CEFTRIAXONE SODIUM 1 G IJ SOLR","vancomycin","VANCOMYCIN","VANCOMYCIN 1 G MINI-BAG PLUS (VIAL MATE)","VANCOMYCIN 1 G/200 ML D5W","VANCOmycin 1 GM in NS 250 mL IVPB","VANCOMYCIN 1,000 MG IV SOLUTION : 1 EACH VIAL","VANCOMYCIN 1.25 G/250 ML NS","VANCOMYCIN 1.25 GM IN NS 250 ML IVPB (REPACKAGE)","VANCOmycin 1.25 GM in NS 500ML IVPB","VANCOMYCIN 1.5 G/500 ML NS","VANCOMYCIN 1.5 GM IN NS 250 ML IVPB (REPACKAGE)","VANCOmycin 1.5 GM in NS 500ML IVPB","VANCOmycin 750 MG in NS 250 mL IVPB","VANCOMYCIN CONSULT TO PHARMACY","VANCOMYCIN HCL","VANCOMYCIN HCL 1 GM VIAL","VANCOMYCIN HCL 10 G IV SOLR","vancomycin hcl 1000 mg iv solr","VANCOMYCIN HCL 1000 MG IV SOLR","VANCOMYCIN HCL IN DEXTROSE 1 GM/200ML IV SOLN","vancomycin in D5W (VANCOCIN) ivpb 1 g","VANCOMYCIN INJ 1,000 MG VIAL.","1 ML VIAL : DEXAMETHASONE SODIUM PHOSPHATE 4 MG/ML IJ SOLN","dexamethasone","DEXAMETHASONE","DEXAMETHASONE 4 MG PO TABS","DEXAMETHASONE 4 MG/1ML INJECTION","piperacillin-tazobactam","PIPERACILLIN-TAZOBACTAM 3.375 G IVPB","PIPERACILLIN-TAZOBACTAM 3.375 G MINI-BAG PLUS","PIPERACILLIN SOD-TAZOBACTAM SO 3-0.375 G IV SOLR","PIPERACILLIN/TAZOBACTAM","PIPERACILLIN/TAZOBACTAM SOD 3.375 GM  VIAL","1 EACH VIAL : CEFEPIME HCL 1 GM IJ SOLR","cefepime","CEFEPIME","CEFEPIME HCL 2 G IJ SOLR","cefepime in D5W (MAXIPIME) ivpb 1 g","meropenem","MEROPENEM 1 G IV SOLR","MEROPENEM 500 MG IV SOLR","150 ML : LEVOFLOXACIN IN D5W 750 MG/150ML IV SOLN","150 ML FLEX CONT : LEVOFLOXACIN IN D5W 5 MG/ML IV SOLN","LEVOFLOXACIN","LEVOFLOXACIN 500 MG PO TABS","LEVOFLOXACIN 500mg in D5W 100mL RT","LEVOFLOXACIN 750 mg in D5W 150mL","LEVOFLOXACIN 750 MG PO TABS","LEVOFLOXACIN IN D5W 500 MG/100ML IV SOLN","LEVOFLOXACIN IN D5W 750 MG/150ML IV SOLN","CIPROFLOXACIN IN D5W 400 MG/200ML IV SOLN","100 ML  -  METRONIDAZOLE IN NACL 5-0.79 MG/ML-% IV SOLN","metroNIDAZOLE","metroNIDAZOLE 500 MG in 100ML RTU-PB","METRONIDAZOLE 500 MG PO TABS","METRONIDAZOLE 500 MG/100 ML","azithromycin","AZITHROMYCIN","AZITHromycin 500 mg in NS 250 mL IV","AZITHROMYCIN 500 MG IV SOLR"];
+			var medicationHeader=["Ceftriaxone","Vancomycin","Levofloxacin","Ciprofloxacin","metronidazole","Azithromycin"]
 			var excludeIcd9Codes=[];
 
 
@@ -1116,16 +1268,18 @@ module.exports = {
 			var vitalReadings=[];
 
 
-			var minDiagnosisTime=4;
+			var minDiagnosisTime=0;
 
 			var minReading=8;
 
 			var vassopressors=1;
 
 			var settings = {
-				vassopressors:0,
-				sofa:0,
-				microlabsFeatures:microlabsFeatures
+					vassopressors:0,
+					sofa:0,
+					microlabsFeatures:microlabsFeatures,
+					inputoutdata:["Urine"],
+					medication:  medication
 				};
 
 
@@ -1175,7 +1329,7 @@ module.exports = {
 				var tempLen=patientIds.length;
 				var patients=[];
 
-				console.log(patientIds);
+				
 				patientIds.forEach(function(patientId,index){
 					 var currentInfo ={
 						patientId:patientId,
@@ -1271,7 +1425,7 @@ module.exports = {
 
 	    								//Get proper Headers as per the input
 
-	    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,icd9Codes,microlabsFeatures,function(err, headers, inputHeaders, targetHeaders){
+	    								return module.exports.getDataHeaders(inputFeatures,outputFeatures,icd9Codes,microlabsFeatures,inputoutdata, medicationHeader, function(err, headers, inputHeaders, targetHeaders){
 	    								console.log("Time Taken to extract the headers Data:")
 	    								var headersd= Date.now();
     									console.log(headersd-histpre);
@@ -1299,7 +1453,7 @@ module.exports = {
 	    											var startTime=trimmedDataVitalSignLabDiagnosisPredictHist[0].time;
 	    											if(diagnosis==1){
 	    												if(initialDiagnosis<minDiagnosisTime*60+startTime){
-	    													//return callback();
+	    													return callback();
 	    												}
 	    											}
 	    										}

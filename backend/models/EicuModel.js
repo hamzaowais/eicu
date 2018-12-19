@@ -295,6 +295,107 @@ module.exports = {
 		}
 
 	},
+	getInputOutputData: function(patientId,inputoutdata,  callback){
+		try{
+
+
+			if(inputoutdata.length==0){
+				return callback(null, []);
+			}
+			
+			var queryParams=[patientId];
+
+			var params=[];
+			for(var i = 1; i <= inputoutdata.length; i++) {
+  				params.push('$' + (i+1));
+  				queryParams.push(inputoutdata[i-1]);
+			}
+
+
+
+			var query="select * from eicu.intakeoutput where patientunitstayid= $1 and celllabel in ("+params.join(",")+")order by intakeoutputoffset;";
+
+
+			
+
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+
+			
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
+	getMedicationData: function(patientId,medications,  callback){
+		try{
+
+			if(medications.length==0){
+				return callback(null, []);
+			}
+			
+			var queryParams=[patientId];
+
+			var params=[];
+			for(var i = 1; i <= medications.length; i++) {
+  				params.push('$' + (i+1));
+  				queryParams.push(medications[i-1]);
+			}
+
+
+
+			var query="select * from eicu.medication where patientunitstayid= $1 and drugname in ("+params.join(",")+") order by drugstartoffset;";
+
+			const client= new Client(database['eicu']); 
+
+			
+
+			client.connect();
+			client.query(query,queryParams,(err, res) => {
+
+			
+  			
+  				if(!err) {
+    				client.end();
+					return callback(null,res.rows);
+					
+				} else {
+					console.log(err);
+					client.end();
+    			 return callback(err); 
+    			 
+				}
+  			
+			});
+
+
+		}
+		catch(e){
+			 return callback(e);
+		}
+
+	},
 	getLabData: function(patientId,labItems,  callback){
 		try{
 
@@ -313,7 +414,7 @@ module.exports = {
 
 
 
-			var query="select labResultOffset, labName, labResult from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") and  labresult is not null order by labResultOffset;";
+			var query="select labResultOffset, labName, labResult,labresulttext from eicu.lab where patientunitstayid= $1 and labName in ("+params.join(",")+") and  labresult is not null order by labResultOffset;";
 
 
 			
